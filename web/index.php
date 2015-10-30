@@ -6,11 +6,13 @@ setlocale(LC_ALL, 'pl_PL.UTF8');
 if ($_SERVER['HTTP_HOST'] == 'api.squarezone.pl') {
 	error_reporting(0);
 	require_once '../config/production.php';
+	$host = 'http://api.squarezone.pl/web';
 } else {
 	if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == '192.168.1.108') {
 		error_reporting(E_ALL);
 		ini_set('display_errors', 1);
 		require_once '../config/local.php';
+		$host = 'http://localhost/~ash/api/web';
 	}
 }
 
@@ -35,8 +37,8 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         // "<p>{$post['body']}</p>";
 
 
-$app->get('/', function() {
-	$url = 'http://localhost/~ash/api/web/index.php';
+$app->get('/', function() use ($host) {
+	$url = $host . '/index.php';
 
 	$api = array(
 		'links' => array(
@@ -65,7 +67,7 @@ $app->get('/news', function() use ($app) {
 
 	// return "<h1>Strona ostatnich newsow</h1>" . $html;
 
-	$url = 'http://localhost/~ash/api/web/index.php';
+	$url = $host . '/index.php';
 
 	$api = array(
 		'links' => array(
@@ -97,7 +99,7 @@ $app->get('/news/{id}', function($id) use ($app){
 
     // return  "<h1>{$post['title']}</h1>".
             // "<div>{$post['markup']}</div>";
-    $url = 'http://localhost/~ash/api/web/index.php';
+    $url = $host . '/index.php';
 
 	$api = array(
 		'links' => array(
