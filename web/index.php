@@ -37,16 +37,6 @@ $app->mount('', new NewsControllerProvider());
 $app->mount('', new ArticlesControllerProvider());
 
 
-// $app['db']->fetchAll('SELECT * FROM table');
-// print_r($news);
-
-// $sql = "SELECT * FROM posts WHERE id = ?";
-// $post = $app['db']->fetchAssoc($sql, array((int) $id));
-
-// return  "<h1>{$post['title']}</h1>".
-        // "<p>{$post['body']}</p>";
-
-
 $app->get('/', function() use ($app) {
 	$url = $app['host'] . '/index.php';
 
@@ -56,16 +46,26 @@ $app->get('/', function() use ($app) {
 				'rel' => 'news',
 				'href' => $url . '/news'
 			),
-			// array(
-			// 	'rel' => 'articles',
-			// 	'href' => $url . '/articles'
-			// )
+			array(
+				'rel' => 'articles',
+				'href' => $url . '/articles'
+			)
 		),
 	);
 
 	return json_encode($api);
 });
 
+// $app->before(function (Request $req) {
+//     $token = $req->headers->get('token');
 
+//     if ($token != 'abc123') {
+//         throw new \Exception('Incorrect token', 403);
+//     }
+// });
 
-$app->run();
+try {
+	$app->run();
+} catch(\Exception $e) {
+	echo json_encode(['message' => $e->getMessage()]);
+}
