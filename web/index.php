@@ -59,7 +59,7 @@ $app->get('/', function() use ($app) {
 // $app->before(function (Request $req) {
 //     $token = $req->headers->get('token');
 
-//     if ($token != 'abc123') {
+//     if ($token != NewsControllerProvider::TOKEN) {
 //         throw new \Exception('Incorrect token', 403);
 //     }
 // });
