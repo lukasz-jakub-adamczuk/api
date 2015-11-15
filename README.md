@@ -28,4 +28,11 @@ http://api.squarezone.pl/web
 	GET /api/v1/users/:user - single user
 	GET /api/v1/users/:user/comments - list of comments for specific user
 
+	GET /api/v1/cups - list of cups
+	GET /api/v1/cups/:slug - single cup
+	GET /api/v1/cups/:slug/battles - list of battles for specific cup
+	GET /api/v1/cups/:slug/players - list of players for specific cup 
+	GET /api/v1/cups/:slug/groups - current ranking in group for specific cup
+	POST /api/v1/cups/:slug/battles/:date/vote/:player - vote for player in battle in specific date for specific cup
+
 ## 

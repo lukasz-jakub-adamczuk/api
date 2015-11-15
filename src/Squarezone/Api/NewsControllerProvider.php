@@ -23,17 +23,18 @@ class NewsControllerProvider implements ControllerProviderInterface {
     {
         $controllers = $app['controllers_factory'];
 
-        // TODO: Implement connect() method.
-        $controllers->get('/news', function() use ($app) {
-            // $news = $app['db']->fetchAll('SELECT * FROM news LIMIT 0,30');
-            $news = $app['db']->fetchAll('SELECT id_news, title, slug, creation_date FROM news LIMIT 0,30');
+        $controllers->get('/news', function(Request $req) use ($app) {
+            $year = $req->get('year', false);
+            $month = $req->get('month', false);
 
-            $html = '';
-            foreach ($news as $item) {
-                // $html .= '<p><a href="./news/'.$item['id_news'].'">' . $item['title'] . '</a></p>';
+            if ($year) {
+                $news = $app['db']->fetchAll('SELECT id_news, title, slug, creation_date FROM news WHERE YEAR(creation_date)="'.$year.'"');
+            } elseif ($month) {
+                // 
+            } else {
+                $news = $app['db']->fetchAll('SELECT id_news, title, slug, creation_date FROM news LIMIT 0,25');
             }
 
-            // return "<h1>Strona ostatnich newsow</h1>" . $html;
 
             $url = $app['host'] . '/index.php';
 
@@ -41,7 +42,7 @@ class NewsControllerProvider implements ControllerProviderInterface {
                 'links' => array(
                     array(
                         'rel' => 'next',
-                        'href' => $url . '/news?page=1&size=30'
+                        'href' => $url . '/news?page=1&size=25'
                     ),
                     // array(
                     // 	'rel' => 'self',
@@ -50,7 +51,7 @@ class NewsControllerProvider implements ControllerProviderInterface {
                 ),
                 'content' => $news,
                 'page' => array(
-                    'size' => 30,
+                    'size' => 25,
                     'totalElements' => '???',
                     'totalPages' => '???',
                     'number' => 0
