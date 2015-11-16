@@ -8,6 +8,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Squarezone\Api\NewsControllerProvider;
 use Squarezone\Api\ArticlesControllerProvider;
+use Squarezone\Api\ArticlesCategoriesControllerProvider;
 
 
 $app = new Silex\Application();
@@ -35,6 +36,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 
 $app->mount('', new NewsControllerProvider());
 $app->mount('', new ArticlesControllerProvider());
+$app->mount('', new ArticlesCategoriesControllerProvider());
 
 
 $app->get('/', function() use ($app) {
@@ -45,6 +47,10 @@ $app->get('/', function() use ($app) {
 			array(
 				'rel' => 'news',
 				'href' => $url . '/news'
+			),
+			array(
+				'rel' => 'articles-categories',
+				'href' => $url . '/articles-categories'
 			),
 			array(
 				'rel' => 'articles',
