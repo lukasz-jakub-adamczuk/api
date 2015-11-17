@@ -24,6 +24,7 @@ class NewsControllerProvider implements ControllerProviderInterface {
         $controllers = $app['controllers_factory'];
 
         $controllers->get('/news', function(Request $req) use ($app) {
+            // TODO: refactor
             $year = $req->get('year', false);
             $month = $req->get('month', false);
             $day = $req->get('day', false);
@@ -101,6 +102,8 @@ class NewsControllerProvider implements ControllerProviderInterface {
 
 
         $controllers->post('/news', function(Request $req) use ($app) {
+            // TODO: try to write tests and create separate service for creating news
+
             $token = $req->get('token', false);
 
             if ($token !== self::TOKEN) {
