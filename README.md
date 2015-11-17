@@ -1,6 +1,28 @@
 # api
 REST api for squarezone.pl
 
+## Requirements
+
+* Vagrant
+* vagrant-host-manager plugin
+
+## Setup
+
+Boot Vagrant machine login and go to the project directory:
+
+```
+vagrant up
+vagrant ssh
+cd /vagrant
+```
+
+Install the dependencies:
+```
+composer install
+```
+
+Application is now available under ```http://squarezone-api.local```
+
 ## API
 
 http://api.squarezone.pl/web
