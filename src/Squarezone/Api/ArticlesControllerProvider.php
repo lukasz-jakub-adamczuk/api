@@ -27,15 +27,15 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
         $controllers->get('/articles', function(Request $req) use ($app) {
             $service = new ArticleListProvider();
 
-            $news = $service->get($req, $app['db']);
+            $items = $service->get($req, $app['db']);
 
             $url = $app['host'] . '/index.php';
 
-            foreach ($news as &$item) {
+            foreach ($items as &$item) {
                 $item['links'] = array(
                     array(
                         'rel' => 'self',
-                        'href' => $url . '/news/'.str_replace('-', '/', substr($item['creation_date'], 0, 10)).'/'.$item['slug']
+                        'href' => $url . '/articles/'.$item['category'].'/'.$item['slug']
                     )
                 );
             }
@@ -51,10 +51,10 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
                     //  'href' => $url . '/news{?page,size,sort}'
                     // )
                 ),
-                'content' => $news,
+                'content' => $items,
                 'page' => array(
                     'size' => 25,
-                    'totalElements' => count($news),
+                    'totalElements' => count($items),
                     'totalPages' => '???',
                     'number' => 0
                 )

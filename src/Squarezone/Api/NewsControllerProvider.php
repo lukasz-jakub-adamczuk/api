@@ -24,61 +24,43 @@ class NewsControllerProvider implements ControllerProviderInterface {
         $controllers = $app['controllers_factory'];
 
         $controllers->get('/news', function(Request $req) use ($app) {
-            // TODO: refactor
-            $year = $req->get('year', false);
-            $month = $req->get('month', false);
-            $day = $req->get('day', false);
-            $slug = $req->get('slug', false);
+            $service = new NewsListProvider();
 
-            if ($year) {
-                $sql = 'SELECT id_news, title, slug, creation_date FROM news WHERE YEAR(creation_date)="'.$year.'"';
-                if ($month) {
-                    $sql = 'SELECT id_news, title, slug, creation_date FROM news WHERE YEAR(creation_date)="'.$year.'" && MONTH(creation_date)="'.$month.'"';
-                    if ($day && $slug) {
-                        $sql = 'SELECT id_news, title, slug, creation_date FROM news WHERE YEAR(creation_date)="'.$year.'" && MONTH(creation_date)="'.$month.'" && DAY(creation_date)="'.$day.'" && slug="'.$slug.'"';
-                    }
-                }
-            } else {
-                $sql = 'SELECT id_news, title, slug, creation_date FROM news LIMIT 0,25';
-            }
+            $items = $service->get($req, $app['db']);
+            
 
-            if ($sql) {
-                $news = $app['db']->fetchAll($sql);
+            $url = $app['host'] . '/index.php';
 
-
-                $url = $app['host'] . '/index.php';
-
-                foreach ($news as &$item) {
-                    $item['links'] = array(
-                        array(
-                            'rel' => 'self',
-                            'href' => $url . '/news/'.str_replace('-', '/', substr($item['creation_date'], 0, 10)).'/'.$item['slug']
-                        )
-                    );
-                }
-
-                $api = array(
-                    'links' => array(
-                        array(
-                            'rel' => 'next',
-                            'href' => $url . '/news?page=1&size=25'
-                        ),
-                        // array(
-                        // 	'rel' => 'self',
-                        // 	'href' => $url . '/news{?page,size,sort}'
-                        // )
-                    ),
-                    'content' => $news,
-                    'page' => array(
-                        'size' => 25,
-                        'totalElements' => count($news),
-                        'totalPages' => '???',
-                        'number' => 0
+            foreach ($items as &$item) {
+                $item['links'] = array(
+                    array(
+                        'rel' => 'self',
+                        'href' => $url . '/news/'.str_replace('-', '/', substr($item['creation_date'], 0, 10)).'/'.$item['slug']
                     )
                 );
-
-                return json_encode($api);
             }
+
+            $api = array(
+                'links' => array(
+                    array(
+                        'rel' => 'next',
+                        'href' => $url . '/news?page=1&size=25'
+                    ),
+                    // array(
+                    // 	'rel' => 'self',
+                    // 	'href' => $url . '/news{?page,size,sort}'
+                    // )
+                ),
+                'content' => $items,
+                'page' => array(
+                    'size' => 25,
+                    'totalElements' => count($items),
+                    'totalPages' => '???',
+                    'number' => 0
+                )
+            );
+
+            return json_encode($api);
         });
 
         $controllers->get('/news/{id}', function($id) use ($app){

@@ -9,26 +9,16 @@ class ArticleListProvider
 {
     public function get(Request $req, Connection $db)
     {
-        $year = $req->get('year', false);
-        $month = $req->get('month', false);
-        $day = $req->get('day', false);
-        $slug = $req->get('slug', false);
+        $category = $req->get('category', false);
 
-        $sql = 'SELECT id_news, title, slug, creation_date FROM news';
+        $sql = 'SELECT a.id_article, a.title, a.slug, a.creation_date, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category)';
 
         $whereParts = [];
 
-        if ($year) {
-            $whereParts[] = sprintf('YEAR(creation_date)="%s"', $year);
-            if ($month) {
-                $whereParts[] = sprintf('MONTH(creation_date)="%s"', $month);
-                if ($day && $slug) {
-                    $whereParts[] = sprintf('DAY(creation_date)="%s"', $month);
-                    $whereParts[] = sprintf('slug="%s"', $slug);
-                }
-            }
+        if ($category) {
+            $whereParts[] = sprintf('ac.slug="%s"', $category);
 
-            $sql .= ' WHERE ' . implode(' && ', $whereParts);
+            $sql .= ' WHERE ' . implode(' AND ', $whereParts);
         } else {
             $sql .= ' LIMIT 0,25';
         }
