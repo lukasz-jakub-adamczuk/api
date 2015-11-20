@@ -27,7 +27,7 @@ class ArticleListProviderSpec extends ObjectBehavior
     {
         $request->get('category', false)->willReturn('test');
 
-        $db->fetchAll('SELECT a.id_article, a.title, a.slug, a.creation_date, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) WHERE ac.slug="test" LIMIT 0,25')->willReturn(range(1, 15));
+        $db->fetchAll('SELECT a.id_article, a.title, a.slug, a.creation_date, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) WHERE ac.slug="test"')->willReturn(range(1, 15));
 
         $this->get($request, $db)->shouldHaveCount(15);
     }

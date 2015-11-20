@@ -18,11 +18,10 @@ class NewsListProvider
 
         // pagination
         $page = $req->get('page', 1);
-        $size = $req->get('size', 25);
+        $size = $req->get('size', self::SIZE);
 
         // query
         $sql = 'SELECT id_news, title, slug, creation_date FROM news';
-        // $sql = '...';
 
         $whereParts = [];
 
@@ -39,8 +38,6 @@ class NewsListProvider
             $sql .= ' WHERE ' . implode(' AND ', $whereParts);
         } else {
             $sql .= ' LIMIT ' . (($page-1)*$size) . ',' . ($page*$size);
-            // $sql .= ' LIMIT 0,25';
-            // $sql .= ' LIMIT '.$page.','.$size.'';
         }
 
         return $db->fetchAll($sql);
