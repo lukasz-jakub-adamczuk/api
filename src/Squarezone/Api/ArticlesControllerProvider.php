@@ -97,9 +97,9 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
 
             // 'links' => 
 
-            ResponseCreation::add('links', );
+            // ResponseCreation::add('links', );
 
-            return ResponseCreation::get();
+            // return ResponseCreation::get();
 
             $api = array(
                 'links' => array(

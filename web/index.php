@@ -6,6 +6,8 @@ setlocale(LC_ALL, 'pl_PL.UTF8');
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Squarezone\Api\OAuth2ControllerProvider;
+
 use Squarezone\Api\NewsControllerProvider;
 use Squarezone\Api\ArticlesControllerProvider;
 use Squarezone\Api\ArticlesCategoriesControllerProvider;
@@ -33,6 +35,8 @@ if ($_SERVER['HTTP_HOST'] == 'api.squarezone.pl') {
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 	'db.options' => $config
 ));
+
+$app->mount('/oauth2', new OAuth2ControllerProvider());
 
 $app->mount('', new NewsControllerProvider());
 $app->mount('', new ArticlesControllerProvider());

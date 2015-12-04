@@ -6,7 +6,12 @@ use Doctrine\DBAL\Connection;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
+use Squarezone\Api\Service\NewsListProvider;
+use Squarezone\Api\Service\NewsProvider;
 use Symfony\Component\HttpFoundation\Request;
+
+// use Exception;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class NewsControllerProvider implements ControllerProviderInterface {
 
@@ -24,6 +29,13 @@ class NewsControllerProvider implements ControllerProviderInterface {
         $controllers = $app['controllers_factory'];
 
         $controllers->get('/news', function(Request $req) use ($app) {
+            // print_r($req->headers->get('host'));
+            if ($req->headers->get('access_token')) {
+                echo 'go ahead';
+            } else {
+                // header('403 Forbidden');
+                throw new HttpException(403);
+            }
             $service = new NewsListProvider();
 
             $items = $service->get($req, $app['db']);
