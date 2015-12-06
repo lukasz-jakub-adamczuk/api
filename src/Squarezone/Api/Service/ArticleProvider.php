@@ -15,7 +15,7 @@ class ArticleProvider
         $slug = $req->get('slug', false);
 
         if (empty($category) || empty($slug)) {
-        	throw new SquarezoneException();
+            throw new SquarezoneException();
         }
 
         $sql = 'SELECT a.id_article, a.title, a.slug, a.creation_date, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category)';
@@ -28,7 +28,7 @@ class ArticleProvider
         $sql .= ' WHERE ' . implode(' AND ', $whereParts);
 
         if ($result = $db->fetchAssoc($sql)) {
-        	return $result;
+            return $result;
         }
         return false;
     }
