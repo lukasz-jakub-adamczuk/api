@@ -7,11 +7,11 @@ use Squarezone\Exception\OAuth2\MissingClientException;
 
 class OAuth2Service
 {
-    private $db;
+    // private $db;
 
-    public function __construct($db) {
-        $this->db = $db;
-    }
+    // public function __construct($db) {
+    //     $this->db = $db;
+    // }
 
     public function getAccessToken($client_id, $secret)
     {
@@ -19,7 +19,7 @@ class OAuth2Service
             throw new MissingDataException();
         } else {
             $sql = 'SELECT id FROM oauth_clients WHERE client_id = ?';
-            $client = $this->db->fetchAssoc($sql, array((string) $client_id));
+            $client = $db->fetchAssoc($sql, array((string) $client_id));
 
             if (!$client) {
                 throw new MissingClientException();
@@ -31,7 +31,7 @@ class OAuth2Service
                     'created_at' => time()
                 );
 
-                $this->db->insert('oauth_access_token', $fields);
+                $db->insert('oauth_access_token', $fields);
 
                 $response = array(
                     'access_token' => $access_token,
@@ -44,6 +44,6 @@ class OAuth2Service
     }
 
     public function validateAccessToken($access_token) {
-        // ...
+        // TODO: write logic here
     }
 }

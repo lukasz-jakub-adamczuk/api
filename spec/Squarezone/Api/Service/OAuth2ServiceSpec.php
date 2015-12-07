@@ -50,34 +50,21 @@ class OAuth2ServiceSpec extends ObjectBehavior
 
     function it_throws_exception_when_access_token_is_empty()
     {
-        $this->shouldThrow(EmptyAccessTokenException::class)->during('validateToken', array(''));
+        $this->shouldThrow(EmptyAccessTokenException::class)->during('validateAccessToken', array(''));
     }
 
     function it_throws_exception_when_access_token_does_not_exists()
     {
-
+        $this->shouldThrow(EmptyAccessTokenException::class)->during('validateAccessToken', array('000000'));
     }
 
     function it_throws_exception_when_access_token_is_expired()
     {
-
+        $this->shouldThrow(EmptyAccessTokenException::class)->during('validateAccessToken', array('999999'));
     }
 
     function it_returns_true_when_access_token_is_valid()
     {
-
+        // OK
     }
-
-// validateToken
-
-    // function it_throws_exception_when_access_token_is_not_valid() {
-    //     3 przypadki
-    //     pusty access_token => wyjatek
-    //     access_token nie istnieje w bazie => wyjatek
-    //     access_token istatnije w bazie ale jest niewazny => wyjatek
-    // }
-
-    // function it_returns_true_when_access_token_is_valid() {
-    //     jesli wszytko ok => true
-    // }
 }

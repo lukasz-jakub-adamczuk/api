@@ -2,7 +2,7 @@
 
 namespace Squarezone\Exception\OAuth2;
 
-use Squarezone\SquarezoneException;
+use Squarezone\Exception\SquarezoneException;
 
 /**
  * Created by PhpStorm.
