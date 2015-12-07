@@ -7,7 +7,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\Request;
 
-use Squarezone\SquarezoneException;
+use Squarezone\Exception\SquarezoneException;
 use Squarezone\Exception\OAuth2\MissingDataException;
 use Squarezone\Exception\OAuth2\MissingClientException;
 
@@ -46,6 +46,26 @@ class OAuth2ServiceSpec extends ObjectBehavior
 
         $response->shouldHaveKey('access_token');
         $response->shouldHaveKey('expires_at');
+    }
+
+    function it_throws_exception_when_access_token_is_empty()
+    {
+        $this->shouldThrow(EmptyAccessTokenException::class)->during('validateToken', array(''));
+    }
+
+    function it_throws_exception_when_access_token_does_not_exists()
+    {
+
+    }
+
+    function it_throws_exception_when_access_token_is_expired()
+    {
+
+    }
+
+    function it_returns_true_when_access_token_is_valid()
+    {
+
     }
 
 // validateToken

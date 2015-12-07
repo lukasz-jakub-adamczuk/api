@@ -7,7 +7,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\Request;
 
-use Squarezone\SquarezoneException;
+use Squarezone\Exception\SquarezoneException;
 
 class ArticleProviderSpec extends ObjectBehavior
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Squarezone;
+namespace Squarezone\Exception;
 
 /**
  * Created by PhpStorm.
