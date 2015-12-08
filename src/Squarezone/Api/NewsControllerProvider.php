@@ -8,6 +8,7 @@ use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
 use Squarezone\Api\Service\NewsListProvider;
 use Squarezone\Api\Service\NewsProvider;
+use Squarezone\Api\Service\OAuth2Service;
 use Symfony\Component\HttpFoundation\Request;
 
 // use Exception;
@@ -29,13 +30,18 @@ class NewsControllerProvider implements ControllerProviderInterface {
         $controllers = $app['controllers_factory'];
 
         $controllers->get('/news', function(Request $req) use ($app) {
-            // print_r($req->headers->get('host'));
-            if ($req->headers->get('access_token')) {
-                echo 'go ahead';
+
+            $service = new OAuth2Service($app['db']);
+
+            $access_token = $req->headers->get('access_token', null);
+
+            // if ($access_token && $service->validateAccessToken($access_token)) {
+            if (!$access_token || !$service->validateAccessToken($access_token)) {
+                throw new HttpException(403);
             } else {
                 // header('403 Forbidden');
-                throw new HttpException(403);
-            }
+                // throw new HttpException(403);
+            
             $service = new NewsListProvider();
 
             $items = $service->get($req, $app['db']);
@@ -73,6 +79,7 @@ class NewsControllerProvider implements ControllerProviderInterface {
             );
 
             return json_encode($api);
+            }
         });
 
         $controllers->get('/news/{id}', function($id) use ($app){
