@@ -12,6 +12,8 @@ use Squarezone\Exception\OAuth2\MissingDataException;
 use Squarezone\Exception\OAuth2\MissingClientException;
 
 use Squarezone\Exception\OAuth2\EmptyAccessTokenException;
+use Squarezone\Exception\OAuth2\MissingAccessTokenException;
+use Squarezone\Exception\OAuth2\ExpiredAccessTokenException;
 
 class OAuth2ServiceSpec extends ObjectBehavior
 {
@@ -49,21 +51,25 @@ class OAuth2ServiceSpec extends ObjectBehavior
 
     function it_throws_exception_when_access_token_is_empty()
     {
-        $this->shouldThrow(EmptyAccessTokenException::class)->during('validateAccessToken', array(''));
+        $this->shouldThrow(EmptyAccessTokenException::class)->during('isValidAccessToken', array(''));
     }
 
     function it_throws_exception_when_access_token_does_not_exists()
     {
-        $this->shouldThrow(MissingAccessTokenException::class)->during('validateAccessToken', array('000000'));
+        $this->shouldThrow(MissingAccessTokenException::class)->during('isValidAccessToken', array('000000'));
     }
 
-    function it_throws_exception_when_access_token_is_expired()
+    function it_throws_exception_when_access_token_is_expired(Connection $db)
     {
-        $this->shouldThrow(ExpiredAccessTokenException::class)->during('validateAccessToken', array('999999'));
+        $db->fetchAssoc('SELECT created_at FROM oauth_access_token WHERE access_token = ?', array('999999'))->willReturn(array('created_at' => date('Y-m-d H:i:s', time() - 7200)));
+
+        $this->shouldThrow(ExpiredAccessTokenException::class)->during('isValidAccessToken', array('999999'));
     }
 
-    function it_returns_true_when_access_token_is_valid()
+    function it_returns_true_when_access_token_is_valid(Connection $db)
     {
-        // OK
+        $db->fetchAssoc('SELECT created_at FROM oauth_access_token WHERE access_token = ?', array('123456'))->willReturn(array('created_at' => date('Y-m-d H:i:s', time() - 360)));
+
+        $this->isValidAccessToken('123456')->shouldReturn(true);
     }
 }

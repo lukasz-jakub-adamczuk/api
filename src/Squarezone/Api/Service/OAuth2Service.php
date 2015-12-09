@@ -47,7 +47,7 @@ class OAuth2Service
         }
     }
 
-    public function validateAccessToken($access_token) {
+    public function isValidAccessToken($access_token) {
 
         if (!$access_token) {
             throw new EmptyAccessTokenException();

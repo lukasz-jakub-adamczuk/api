@@ -35,13 +35,16 @@ class NewsControllerProvider implements ControllerProviderInterface {
 
             $access_token = $req->headers->get('access_token', null);
 
-            // if ($access_token && $service->validateAccessToken($access_token)) {
-            if (!$access_token || !$service->validateAccessToken($access_token)) {
+            try {
+                $service->isValidAccessToken($access_token);
+            } catch (EmptyAccessTokenException $e) {
                 throw new HttpException(403);
-            } else {
-                // header('403 Forbidden');
-                // throw new HttpException(403);
-            
+            } catch (EmptyAccessTokenException $e) {
+                throw new HttpException(403);
+            } catch (EmptyAccessTokenException $e) {
+                throw new HttpException(403);
+            }
+
             $service = new NewsListProvider();
 
             $items = $service->get($req, $app['db']);
@@ -79,7 +82,6 @@ class NewsControllerProvider implements ControllerProviderInterface {
             );
 
             return json_encode($api);
-            }
         });
 
         $controllers->get('/news/{id}', function($id) use ($app){
