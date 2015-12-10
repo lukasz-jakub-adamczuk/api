@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/bootstrap.php';
+
+use Knp\Provider\ConsoleServiceProvider;
+
+$app->register(
+    new ConsoleServiceProvider(),
+    array(
+        'console.name' => 'MyConsoleApp',
+        'console.version' => '0.1.0',
+        'console.project_directory' => __DIR__ . "/.."
+    )
+);
+
+$console = $app['console'];
+$console->add(new \Squarezone\Command\GreetSomeoneCommand());
+$console->run();
