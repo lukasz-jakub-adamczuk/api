@@ -18,7 +18,7 @@ class ArticleProvider
             throw new SquarezoneException();
         }
 
-        $sql = 'SELECT a.id_article, a.title, a.slug, a.creation_date, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category)';
+        $sql = 'SELECT a.*, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category)';
 
         $whereParts = [];
 

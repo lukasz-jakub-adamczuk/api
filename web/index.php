@@ -3,7 +3,6 @@ date_default_timezone_set('Europe/Warsaw');
 setlocale(LC_ALL, 'pl_PL.UTF8');
 
 
-
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Squarezone\Api\OAuth2ControllerProvider;

@@ -11,6 +11,8 @@ use Squarezone\Exception\OAuth2\ExpiredAccessTokenException;
 
 class OAuth2Service
 {
+    const OAUTH_ACCESS_TOKEN_TTL = 3600;
+
     private $db;
 
     public function __construct($db) {
@@ -39,7 +41,7 @@ class OAuth2Service
 
                 $response = array(
                     'access_token' => $access_token,
-                    'expires_at' => 3600
+                    'expires_at' => self::OAUTH_ACCESS_TOKEN_TTL
                 );
 
                 return $response;
@@ -60,7 +62,7 @@ class OAuth2Service
             } else {
                 $period = time() - strtotime($token['created_at']);
 
-                if ($period > 3600) {
+                if ($period > self::OAUTH_ACCESS_TOKEN_TTL) {
                     throw new ExpiredAccessTokenException();
                 } else {
                     return true;
