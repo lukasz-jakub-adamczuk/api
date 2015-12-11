@@ -1,39 +1,12 @@
 <?php
-date_default_timezone_set('Europe/Warsaw');
-setlocale(LC_ALL, 'pl_PL.UTF8');
 
-
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '../app/bootstrap.php';
 
 use Squarezone\Api\OAuth2ControllerProvider;
 
 use Squarezone\Api\NewsControllerProvider;
 use Squarezone\Api\ArticlesControllerProvider;
 use Squarezone\Api\ArticlesCategoriesControllerProvider;
-
-
-$app = new Silex\Application();
-
-$app['debug'] = true;
-
-// load config
-if ($_SERVER['HTTP_HOST'] == 'api.squarezone.pl') {
-	error_reporting(0);
-	require_once '../config/production.php';
-	$app['host'] = 'http://api.squarezone.pl/web';
-} else {
-	if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == '192.168.1.108') {
-		error_reporting(E_ALL);
-		ini_set('display_errors', 1);
-		require_once '../config/local.php';
-		$app['host'] = 'http://localhost/~ash/api/web';
-	}
-}
-
-
-$app->register(new Silex\Provider\DoctrineServiceProvider(), array(
-	'db.options' => $config
-));
 
 $app->mount('/oauth2', new OAuth2ControllerProvider());
 
