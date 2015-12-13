@@ -8,7 +8,13 @@ use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
 use Squarezone\Api\Service\ArticleListProvider;
 use Squarezone\Api\Service\ArticleProvider;
+use Squarezone\Api\Service\ArticleCreator;
+use Squarezone\Api\Service\ArticleEditor;
+use Squarezone\Api\Service\ArticleRemover;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ArticlesControllerProvider implements ControllerProviderInterface {
 
@@ -107,24 +113,11 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
 
 
         $controllers->post('/articles', function(Request $req) use ($app) {
-
-            /** @var Connection $db */
-            $db = $app['db'];
+            $service = new ArticleCreator();
 
             $fields = $req->request->all();
 
-            // create slug
-
-            if (empty($req->get('title'))) {
-                throw new \Exception('Missing title', 400);
-            }
-
-            $db->insert('article', $fields);
-
-            $last_id = $db->lastInsertId();
-
-            $sql = 'SELECT a.*, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) WHERE id_article = ?';
-            $article = $db->fetchAssoc($sql, array((int) $last_id));
+            $article = $service->create($fields, $app['db']);
 
             $url = $app['host'] . '/index.php';
 
@@ -138,25 +131,20 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
                 'content' => $article
             );
 
-            return json_encode($response);
+            return new Response(json_encode($response), 201);
         });
 
-        $controllers->post('/articles/{category}/{slug}', function(Request $req) use ($app) {
+        $controllers->put('/articles/{category}/{slug}', function(Request $req) use ($app) {
             $db = $app['db'];
 
             $service = new ArticleProvider();
-
             $item = $service->get($req, $db);
 
-            $id = $item['id_article'];
-
-            // fields for new
             $fields = $req->request->all();
+            $fields['id'] = $item['id_article'];
 
-            $db->update('article', $fields, array('id_article' => $id));
-
-            $sql = 'SELECT a.*, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) WHERE id_article = ?';
-            $article = $db->fetchAssoc($sql, array((int) $id));
+            $service = new ArticleEditor();
+            $article = $service->update($fields, $db);
 
             $url = $app['host'] . '/index.php';
 
@@ -174,6 +162,35 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
         })
         ->assert('category', '[a-z0-9-]+')
         ->assert('slug', '[a-z0-9-]+');
+
+        $controllers->delete('/articles/{category}/{slug}', function(Request $req) use ($app) {
+            $service = new ArticleProvider();
+
+            $item = $service->get($req, $app['db']);
+
+            $id = $item['id_article'];
+            // var_dump($id);
+
+            try {
+                $service = new ArticleRemover();
+                $service->delete($id, $app['db']);
+
+                return new Response(json_encode(''), 204);
+            } catch(SquarezoneException $e) {
+                // throw new HttpException(404);
+                return new Response(json_encode(''), 404);
+            }
+            // return new Response(json_encode(''), 404);
+
+            // puste id, 400
+            // brak wpisu o danym id, 404
+            // usunieto, 204 ''
+
+            // return new Response(json_encode(''), 204);
+        })
+        ->assert('category', '[a-z0-9-]+')
+        ->assert('slug', '[a-z0-9-]+');
+
 
         return $controllers;
     }

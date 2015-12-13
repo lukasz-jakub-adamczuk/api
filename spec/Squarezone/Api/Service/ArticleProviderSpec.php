@@ -16,36 +16,36 @@ class ArticleProviderSpec extends ObjectBehavior
         $this->shouldHaveType('Squarezone\Api\Service\ArticleProvider');
     }
 
-    function it_provides_article(Request $request, Connection $db)
+    function it_provides_article(Request $req, Connection $db)
     {
-    	$request->get('category', false)->willReturn('crono-trigger');
-    	$request->get('slug', false)->willReturn('recenzja');
+    	$req->get('category', false)->willReturn('crono-trigger');
+    	$req->get('slug', false)->willReturn('recenzja');
 
         $db->fetchAssoc('SELECT a.*, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) WHERE ac.slug="crono-trigger" AND a.slug="recenzja"')->willReturn(array('title' => '', 'slug' => ''));
 
-        $article = $this->get($request, $db);
+        $article = $this->get($req, $db);
 
         $article->shouldHaveKey('title');
         $article->shouldHaveKey('slug');
     }
 
-    function it_throws_exception_when_params_incorrect(Request $request, Connection $db)
+    function it_throws_exception_when_params_incorrect(Request $req, Connection $db)
     {
-    	$request->get('category', false)->willReturn(false);
-    	$request->get('slug', false)->willReturn(false);
+    	$req->get('category', false)->willReturn(false);
+    	$req->get('slug', false)->willReturn(false);
 
     	$db->fetchAssoc(Argument::type('string'))->shouldNotBeCalled();
 
-    	$this->shouldThrow(SquarezoneException::class)->during('get', array($request, $db));
+    	$this->shouldThrow(SquarezoneException::class)->during('get', array($req, $db));
     }
 
-    function it_returns_empty_array_when_article_does_not_exists(Request $request, Connection $db)
+    function it_returns_empty_array_when_article_does_not_exists(Request $req, Connection $db)
     {
-    	$request->get('category', false)->willReturn('aaa');
-    	$request->get('slug', false)->willReturn('bbb');
+    	$req->get('category', false)->willReturn('aaa');
+    	$req->get('slug', false)->willReturn('bbb');
 
         $db->fetchAssoc('SELECT a.*, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) WHERE ac.slug="aaa" AND a.slug="bbb"')->willReturn(false);
 
-        $this->get($request, $db)->shouldBe(false);
+        $this->get($req, $db)->shouldBe(false);
     }
 }

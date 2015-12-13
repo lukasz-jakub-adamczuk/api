@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '../app/bootstrap.php';
+require_once __DIR__ . '/../app/bootstrap.php';
 
 use Squarezone\Api\OAuth2ControllerProvider;
 
@@ -16,26 +16,26 @@ $app->mount('', new ArticlesCategoriesControllerProvider());
 
 
 $app->get('/', function() use ($app) {
-	$url = $app['host'] . '/index.php';
+    $url = $app['host'] . '/index.php';
 
-	$api = array(
-		'links' => array(
-			array(
-				'rel' => 'news',
-				'href' => $url . '/news'
-			),
-			array(
-				'rel' => 'articles-categories',
-				'href' => $url . '/articles-categories'
-			),
-			array(
-				'rel' => 'articles',
-				'href' => $url . '/articles'
-			)
-		),
-	);
+    $api = array(
+        'links' => array(
+            array(
+                'rel' => 'news',
+                'href' => $url . '/news'
+            ),
+            array(
+                'rel' => 'articles-categories',
+                'href' => $url . '/articles-categories'
+            ),
+            array(
+                'rel' => 'articles',
+                'href' => $url . '/articles'
+            )
+        ),
+    );
 
-	return json_encode($api);
+    return json_encode($api);
 });
 
 // $app->before(function (Request $req) {
@@ -47,7 +47,7 @@ $app->get('/', function() use ($app) {
 // });
 
 try {
-	$app->run();
+    $app->run();
 } catch(\Exception $e) {
-	echo json_encode(['message' => $e->getMessage()]);
+    echo json_encode(['message' => $e->getMessage()]);
 }
