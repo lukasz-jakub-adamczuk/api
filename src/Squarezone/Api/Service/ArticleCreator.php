@@ -9,7 +9,7 @@ use Squarezone\Exception\SquarezoneException;
 
 class ArticleCreator
 {
-    public function create($fields, Connection $db)
+    public function create(array $fields, Connection $db)
     {
         if (empty($fields['title'])) {
             throw new SquarezoneException('Missing title', 400);

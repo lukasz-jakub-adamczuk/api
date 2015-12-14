@@ -14,7 +14,9 @@ use Squarezone\Api\Service\ArticleRemover;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Squarezone\Exception\SquarezoneException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+
 
 class ArticlesControllerProvider implements ControllerProviderInterface {
 
@@ -169,7 +171,6 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
             $item = $service->get($req, $app['db']);
 
             $id = $item['id_article'];
-            // var_dump($id);
 
             try {
                 $service = new ArticleRemover();
@@ -177,16 +178,8 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
 
                 return new Response(json_encode(''), 204);
             } catch(SquarezoneException $e) {
-                // throw new HttpException(404);
                 return new Response(json_encode(''), 404);
             }
-            // return new Response(json_encode(''), 404);
-
-            // puste id, 400
-            // brak wpisu o danym id, 404
-            // usunieto, 204 ''
-
-            // return new Response(json_encode(''), 204);
         })
         ->assert('category', '[a-z0-9-]+')
         ->assert('slug', '[a-z0-9-]+');
