@@ -5,7 +5,6 @@ namespace spec\Squarezone\Api\Service;
 use Doctrine\DBAL\Connection;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-// use Symfony\Component\HttpFoundation\Request;
 
 use Squarezone\Exception\SquarezoneException;
 

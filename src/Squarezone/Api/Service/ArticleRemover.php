@@ -3,7 +3,6 @@
 namespace Squarezone\Api\Service;
 
 use Doctrine\DBAL\Connection;
-use Symfony\Component\HttpFoundation\Request;
 
 use Squarezone\Exception\SquarezoneException;
 
