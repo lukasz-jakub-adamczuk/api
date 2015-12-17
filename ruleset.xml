@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ruleset name="SquarezoneAPI">
+    <description>Squarezone API coding standard</description>
+    <file>src</file>
+    <rule ref="PSR1"/>
+    <rule ref="PSR2"/>
+</ruleset>
