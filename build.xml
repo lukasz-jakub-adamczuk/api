@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Squarezone API" default="default">
+    <target name="lint" description="Perform syntax check of sourcecode php files">
+        <apply executable="php" failonerror="true" passthru="true">
+            <arg value="-l"/>
+            <fileset dir="src">
+                <include name="**/*.php"/>
+            </fileset>
+
+            <fileset dir="spec">
+                <include name="**/*.php"/>
+            </fileset>
+        </apply>
+    </target>
+
+    <target name="phpmd" description="Check code using PHPMD">
+        <exec executable="bin/phpmd" passthru="true" checkreturn="false">
+            <arg line="src
+                xml
+                phpmd.xml
+                --suffixes php"/>
+        </exec>
+    </target>
+
+    <target name="phpcpd" description="Check code using PHPCPD">
+        <exec executable="bin/phpcpd" passthru="true">
+            <arg line="src spec"/>
+        </exec>
+    </target>
+
+    <target name="phpcs" description="Check code using PHP_CodeSniffer">
+        <exec executable="bin/phpcs" passthru="true" checkreturn="false">
+            <arg line="--report=checkstyle
+                --standard=ruleset.xml
+                --extensions=php"/>
+        </exec>
+    </target>
+
+    <target name="quality" depends="lint,phpmd,phpcpd,phpcs"/>
+
+    <target name="phpspec">
+        <exec executable="bin/phpspec" passthru="true" checkreturn="true">
+            <arg line="run
+                --format=pretty"/>
+        </exec>
+    </target>
+
+    <target name="default" depends="quality,phpspec"/>
+</project>
