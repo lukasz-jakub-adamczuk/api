@@ -11,6 +11,7 @@ use Squarezone\Api\Service\ArticleProvider;
 use Squarezone\Api\Service\ArticleCreator;
 use Squarezone\Api\Service\ArticleEditor;
 use Squarezone\Api\Service\ArticleRemover;
+use Squarezone\Api\Service\OAuth2Service;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -32,6 +33,20 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
         $controllers = $app['controllers_factory'];
 
         $controllers->get('/articles', function(Request $req) use ($app) {
+            $service = new OAuth2Service($app['db']);
+
+            $access_token = $req->headers->get('access_token', null);
+
+            try {
+                $service->isValidAccessToken($access_token);
+            } catch (EmptyAccessTokenException $e) {
+                throw new HttpException(403);
+            } catch (MissingAccessTokenException $e) {
+                throw new HttpException(403);
+            } catch (ExpiredAccessTokenException $e) {
+                throw new HttpException(403);
+            }
+
             $service = new ArticleListProvider();
 
             $items = $service->get($req, $app['db']);

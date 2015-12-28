@@ -7,8 +7,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class NewsListProvider
 {
-	const SIZE = 25;
-	
+    const SIZE = 25;
+    
     public function get(Request $req, Connection $db)
     {
         $year = $req->get('year', false);

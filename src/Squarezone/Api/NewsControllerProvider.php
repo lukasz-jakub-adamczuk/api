@@ -16,8 +16,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class NewsControllerProvider implements ControllerProviderInterface {
 
-    const TOKEN = 'abc123';
-
     /**
      * Returns routes to connect to the given application.
      *
@@ -39,16 +37,15 @@ class NewsControllerProvider implements ControllerProviderInterface {
                 $service->isValidAccessToken($access_token);
             } catch (EmptyAccessTokenException $e) {
                 throw new HttpException(403);
-            } catch (EmptyAccessTokenException $e) {
+            } catch (MissingAccessTokenException $e) {
                 throw new HttpException(403);
-            } catch (EmptyAccessTokenException $e) {
+            } catch (ExpiredAccessTokenException $e) {
                 throw new HttpException(403);
             }
 
             $service = new NewsListProvider();
 
             $items = $service->get($req, $app['db']);
-            
 
             $url = $app['host'] . '/index.php';
 
@@ -66,11 +63,7 @@ class NewsControllerProvider implements ControllerProviderInterface {
                     array(
                         'rel' => 'next',
                         'href' => $url . '/news?page=1&size=25'
-                    ),
-                    // array(
-                    // 	'rel' => 'self',
-                    // 	'href' => $url . '/news{?page,size,sort}'
-                    // )
+                    )
                 ),
                 'content' => $items,
                 'page' => array(

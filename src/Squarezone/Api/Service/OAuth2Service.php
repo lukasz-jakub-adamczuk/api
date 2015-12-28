@@ -15,7 +15,8 @@ class OAuth2Service
 
     private $db;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->db = $db;
     }
 
@@ -49,8 +50,8 @@ class OAuth2Service
         }
     }
 
-    public function isValidAccessToken($access_token) {
-
+    public function isValidAccessToken($access_token)
+    {
         if (!$access_token) {
             throw new EmptyAccessTokenException();
         } else {
