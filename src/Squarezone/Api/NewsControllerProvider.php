@@ -31,10 +31,10 @@ class NewsControllerProvider implements ControllerProviderInterface {
 
             $service = new OAuth2Service($app['db']);
 
-            $access_token = $req->headers->get('access_token', null);
+            $accessToken = $req->headers->get('access_token', null);
 
             try {
-                $service->isValidAccessToken($access_token);
+                $service->isValidAccessToken($accessToken);
             } catch (EmptyAccessTokenException $e) {
                 throw new HttpException(403);
             } catch (MissingAccessTokenException $e) {
@@ -59,19 +59,7 @@ class NewsControllerProvider implements ControllerProviderInterface {
             }
 
             $api = array(
-                'links' => array(
-                    array(
-                        'rel' => 'next',
-                        'href' => $url . '/news?page=1&size=25'
-                    )
-                ),
-                'content' => $items,
-                'page' => array(
-                    'size' => 25,
-                    'totalElements' => count($items),
-                    'totalPages' => '???',
-                    'number' => 0
-                )
+                'content' => $items
             );
 
             return json_encode($api);
@@ -84,12 +72,6 @@ class NewsControllerProvider implements ControllerProviderInterface {
             $url = $app['host'] . '/index.php';
 
             $api = array(
-                'links' => array(
-                    array(
-                        'rel' => 'self',
-                        'href' => $url . '/news/' . $id
-                    )
-                ),
                 'news' => $post
             );
 
@@ -119,35 +101,15 @@ class NewsControllerProvider implements ControllerProviderInterface {
 
             $db->insert('news', $fields);
 
-            $last_id = $db->lastInsertId();
-
-            
-
-//            $news = $app['db']->('INSERT INTO news VALUE(id_news, title, slug, creation_date');
+            $lastId = $db->lastInsertId();
 
             $sql = "SELECT * FROM news WHERE id_news = ?";
-            $news = $db->fetchAssoc($sql, array((int) $last_id));
+            $news = $db->fetchAssoc($sql, array((int) $lastId));
 
             $url = $app['host'] . '/index.php';
 
             $api = array(
-                'links' => array(
-                    array(
-                        'rel' => 'next',
-                        'href' => $url . '/news?page=1&size=30'
-                    ),
-                    // array(
-                    // 	'rel' => 'self',
-                    // 	'href' => $url . '/news{?page,size,sort}'
-                    // )
-                ),
-                'content' => $news,
-                'page' => array(
-                    'size' => 30,
-                    'totalElements' => '???',
-                    'totalPages' => '???',
-                    'number' => 0
-                )
+                'content' => $news
             );
 
             return json_encode($api);

@@ -9,7 +9,6 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Squarezone\Api\Service\OAuth2Service;
 
-// use Exception;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OAuth2ControllerProvider implements ControllerProviderInterface {
@@ -25,16 +24,16 @@ class OAuth2ControllerProvider implements ControllerProviderInterface {
     {
         $controllers = $app['controllers_factory'];
 
-        $controllers->post('/', function(Request $req) use ($app) {
-            $client_id = $req->request->get('client_id');
+        $controllers->post('/', function (Request $req) use ($app) {
+            $clientId = $req->request->get('client_id');
             $secret = $req->request->get('secret');
 
             $service = new OAuth2Service($app['db']);
 
             try {
-                $access_token = $service->getAccessToken($client_id, $secret);
+                $accessToken = $service->getAccessToken($clientId, $secret);
 
-                return json_encode($access_token);
+                return json_encode($accessToken);
             } catch (MissingDataException $e) {
                 throw HttpException(400);
             } catch (MissingClientException $e) {

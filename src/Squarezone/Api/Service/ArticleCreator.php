@@ -3,7 +3,6 @@
 namespace Squarezone\Api\Service;
 
 use Doctrine\DBAL\Connection;
-
 use Squarezone\Exception\SquarezoneException;
 
 class ArticleCreator
@@ -16,10 +15,13 @@ class ArticleCreator
 
         $db->insert('article', $fields);
 
-        $last_id = $db->lastInsertId();
+        $lastId = $db->lastInsertId();
 
-        $sql = 'SELECT a.*, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) WHERE id_article = ?';
-        $article = $db->fetchAssoc($sql, array((int) $last_id));
+        $sql = 'SELECT a.*, ac.slug AS category
+                FROM article a
+                LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category)
+                WHERE id_article = ?';
+        $article = $db->fetchAssoc($sql, array((int) $lastId));
 
         return $article;
     }

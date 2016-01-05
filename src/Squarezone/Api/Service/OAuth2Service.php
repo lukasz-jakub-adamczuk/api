@@ -20,28 +20,28 @@ class OAuth2Service
         $this->db = $db;
     }
 
-    public function getAccessToken($client_id, $secret)
+    public function getAccessToken($clientId, $secret)
     {
-        if (!$client_id || !$secret) {
+        if (!$clientId || !$secret) {
             throw new MissingDataException();
         } else {
             $sql = 'SELECT id FROM oauth_clients WHERE client_id = ? AND secret = ?';
-            $client = $this->db->fetchAssoc($sql, array((string) $client_id, (string) $secret));
+            $client = $this->db->fetchAssoc($sql, array((string) $clientId, (string) $secret));
 
             if (!$client) {
                 throw new MissingClientException();
             } else {
-                $access_token = sha1(time()+'nfjsahfxnc,mxznfzkehf,vb6548264');
+                $accessToken = sha1(time()+'nfjsahfxnc,mxznfzkehf,vb6548264');
                 $fields = array(
                     'client_id' => $client['id'],
-                    'access_token' => $access_token,
+                    'access_token' => $accessToken,
                     'created_at' => date('Y-m-d H:i:s')
                 );
 
                 $this->db->insert('oauth_access_token', $fields);
 
                 $response = array(
-                    'access_token' => $access_token,
+                    'access_token' => $accessToken,
                     'expires_at' => self::OAUTH_ACCESS_TOKEN_TTL
                 );
 
@@ -50,13 +50,13 @@ class OAuth2Service
         }
     }
 
-    public function isValidAccessToken($access_token)
+    public function isValidAccessToken($accessToken)
     {
-        if (!$access_token) {
+        if (!$accessToken) {
             throw new EmptyAccessTokenException();
         } else {
             $sql = 'SELECT created_at FROM oauth_access_token WHERE access_token = ?';
-            $token = $this->db->fetchAssoc($sql, array($access_token));
+            $token = $this->db->fetchAssoc($sql, array($accessToken));
 
             if (!$token) {
                 throw new MissingAccessTokenException();

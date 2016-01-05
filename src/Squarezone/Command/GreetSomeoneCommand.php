@@ -39,7 +39,7 @@ class GreetSomeoneCommand extends Command
             $name = $this->getHelper('dialog')->askAndValidate(
                 $output,
                 'Person to be greeted:',
-                function($name) {
+                function ($name) {
                     if (empty($name)) {
                         throw new \Exception('Name can not be empty');
                     }
@@ -50,5 +50,4 @@ class GreetSomeoneCommand extends Command
             $input->setArgument('name', $name);
         }
     }
-
 }

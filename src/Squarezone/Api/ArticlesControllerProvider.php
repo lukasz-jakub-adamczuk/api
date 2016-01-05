@@ -35,10 +35,10 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
         $controllers->get('/articles', function(Request $req) use ($app) {
             $service = new OAuth2Service($app['db']);
 
-            $access_token = $req->headers->get('access_token', null);
+            $accessToken = $req->headers->get('access_token', null);
 
             try {
-                $service->isValidAccessToken($access_token);
+                $service->isValidAccessToken($accessToken);
             } catch (EmptyAccessTokenException $e) {
                 throw new HttpException(403);
             } catch (MissingAccessTokenException $e) {

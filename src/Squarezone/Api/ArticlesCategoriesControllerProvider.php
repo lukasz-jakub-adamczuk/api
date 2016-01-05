@@ -27,44 +27,24 @@ class ArticlesCategoriesControllerProvider implements ControllerProviderInterfac
             if ($sql) {
                 $items = $app['db']->fetchAll($sql);
 
-
                 $url = $app['host'] . '/index.php';
-
-                // foreach ($items as &$item) {
-                //     $item['links'] = array(
-                //         array(
-                //             'rel' => 'self',
-                //             'href' => $url . '/items/'.str_replace('-', '/', substr($item['creation_date'], 0, 10)).'/'.$item['slug']
-                //         )
-                //     );
-                // }
 
                 $api = array(
                     'links' => array(
                         array(
                             'rel' => 'next',
                             'href' => $url . '/articles-categories?page=1&size=25'
-                        ),
-                        // array(
-                        // 	'rel' => 'self',
-                        // 	'href' => $url . '/items{?page,size,sort}'
-                        // )
+                        )
                     ),
-                    'content' => $items,
-                    'page' => array(
-                        'size' => 25,
-                        'totalElements' => count($items),
-                        'totalPages' => '???',
-                        'number' => 0
-                    )
+                    'content' => $items
                 );
 
                 return json_encode($api);
             }
         });
 
-        $controllers->get('/news/{id}', function($id) use ($app){
-            $sql = "SELECT * FROM news WHERE id_news = ?";
+        $controllers->get('/articles-categories/{id}', function($id) use ($app){
+            $sql = "SELECT * FROM article_category WHERE id_article_category = ?";
             $post = $app['db']->fetchAssoc($sql, array((int) $id));
 
             $url = $app['host'] . '/index.php';
@@ -73,10 +53,10 @@ class ArticlesCategoriesControllerProvider implements ControllerProviderInterfac
                 'links' => array(
                     array(
                         'rel' => 'self',
-                        'href' => $url . '/news/' . $id
+                        'href' => $url . '/articles-categories/' . $id
                     )
                 ),
-                'news' => $post
+                'articles-categories' => $post
             );
 
             return json_encode($api);
@@ -103,11 +83,11 @@ class ArticlesCategoriesControllerProvider implements ControllerProviderInterfac
 
             $db->insert('article_category', $fields);
 
-            $last_id = $db->lastInsertId();
+            $lastId = $db->lastInsertId();
 
             // fetch recent items
             $sql = "SELECT * FROM article_category WHERE id_article_category = ?";
-            $items = $db->fetchAssoc($sql, array((int) $last_id));
+            $items = $db->fetchAssoc($sql, array((int) $lastId));
 
             $url = $app['host'] . '/index.php';
 
@@ -116,19 +96,9 @@ class ArticlesCategoriesControllerProvider implements ControllerProviderInterfac
                     array(
                         'rel' => 'next',
                         'href' => $url . '/articles-categories?page=1&size=30'
-                    ),
-                    // array(
-                    // 	'rel' => 'self',
-                    // 	'href' => $url . '/news{?page,size,sort}'
-                    // )
+                    )
                 ),
-                'content' => $items,
-                'page' => array(
-                    'size' => 30,
-                    'totalElements' => count($items),
-                    'totalPages' => '???',
-                    'number' => 0
-                )
+                'content' => $items
             );
 
             return json_encode($api);
