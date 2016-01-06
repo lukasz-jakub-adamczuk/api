@@ -18,14 +18,19 @@ class ArticleProvider
             throw new SquarezoneException();
         }
 
-        $sql = 'SELECT a.*, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category)';
+        $sql = 'SELECT a.*, ac.slug AS category 
+                FROM article a 
+                LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) 
+                WHERE ac.slug="%s" AND a.slug="%s"';
 
-        $whereParts = [];
+        $sql = sprintf($sql, $category, $slug);
 
-        $whereParts[] = sprintf('ac.slug="%s"', $category);
-        $whereParts[] = sprintf('a.slug="%s"', $slug);
+        // $whereParts = [];
 
-        $sql .= ' WHERE ' . implode(' AND ', $whereParts);
+        // $whereParts[] = sprintf('ac.slug="%s"', $category);
+        // $whereParts[] = sprintf('a.slug="%s"', $slug);
+
+        // $sql .= ' WHERE ' . implode(' AND ', $whereParts);
 
         if ($result = $db->fetchAssoc($sql)) {
             return $result;

@@ -18,8 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Squarezone\Exception\SquarezoneException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-
-class ArticlesControllerProvider implements ControllerProviderInterface {
+class ArticlesControllerProvider implements ControllerProviderInterface
+{
 
     /**
      * Returns routes to connect to the given application.
@@ -32,7 +32,7 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
     {
         $controllers = $app['controllers_factory'];
 
-        $controllers->get('/articles', function(Request $req) use ($app) {
+        $controllers->get('/articles', function (Request $req) use ($app) {
             $service = new OAuth2Service($app['db']);
 
             $accessToken = $req->headers->get('access_token', null);
@@ -81,7 +81,7 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
             return json_encode($response);
         });
 
-        $controllers->get('/articles/{category}', function(Request $req) use ($app) {
+        $controllers->get('/articles/{category}', function (Request $req) use ($app) {
             $service = new ArticleListProvider();
 
             $items = $service->get($req, $app['db']);
@@ -106,7 +106,7 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
         })
         ->assert('category', '[a-z0-9-]+');
 
-        $controllers->get('/articles/{category}/{slug}', function(Request $req) use ($app) {
+        $controllers->get('/articles/{category}/{slug}', function (Request $req) use ($app) {
             $service = new ArticleProvider();
 
             $item = $service->get($req, $app['db']);
@@ -129,7 +129,7 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
         ->assert('slug', '[a-z0-9-]+');
 
 
-        $controllers->post('/articles', function(Request $req) use ($app) {
+        $controllers->post('/articles', function (Request $req) use ($app) {
             $service = new ArticleCreator();
 
             $fields = $req->request->all();
@@ -151,7 +151,7 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
             return new Response(json_encode($response), 201);
         });
 
-        $controllers->put('/articles/{category}/{slug}', function(Request $req) use ($app) {
+        $controllers->put('/articles/{category}/{slug}', function (Request $req) use ($app) {
             $db = $app['db'];
 
             $service = new ArticleProvider();
@@ -180,7 +180,7 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
         ->assert('category', '[a-z0-9-]+')
         ->assert('slug', '[a-z0-9-]+');
 
-        $controllers->delete('/articles/{category}/{slug}', function(Request $req) use ($app) {
+        $controllers->delete('/articles/{category}/{slug}', function (Request $req) use ($app) {
             $service = new ArticleProvider();
 
             $item = $service->get($req, $app['db']);
@@ -192,7 +192,7 @@ class ArticlesControllerProvider implements ControllerProviderInterface {
                 $service->delete($id, $app['db']);
 
                 return new Response(json_encode(''), 204);
-            } catch(SquarezoneException $e) {
+            } catch (SquarezoneException $e) {
                 return new Response(json_encode(''), 404);
             }
         })

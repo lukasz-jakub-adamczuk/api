@@ -17,10 +17,11 @@ class ArticleCreator
 
         $lastId = $db->lastInsertId();
 
-        $sql = 'SELECT a.*, ac.slug AS category
-                FROM article a
-                LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category)
+        $sql = 'SELECT a.*, ac.slug AS category 
+                FROM article a 
+                LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) 
                 WHERE id_article = ?';
+        
         $article = $db->fetchAssoc($sql, array((int) $lastId));
 
         return $article;

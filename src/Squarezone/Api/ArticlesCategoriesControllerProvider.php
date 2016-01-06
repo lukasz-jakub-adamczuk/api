@@ -8,7 +8,8 @@ use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class ArticlesCategoriesControllerProvider implements ControllerProviderInterface {
+class ArticlesCategoriesControllerProvider implements ControllerProviderInterface
+{
 
     /**
      * Returns routes to connect to the given application.
@@ -21,7 +22,7 @@ class ArticlesCategoriesControllerProvider implements ControllerProviderInterfac
     {
         $controllers = $app['controllers_factory'];
 
-        $controllers->get('/articles-categories', function(Request $req) use ($app) {
+        $controllers->get('/articles-categories', function (Request $req) use ($app) {
             $sql = 'SELECT id_article_category, name, slug FROM article_category';
 
             if ($sql) {
@@ -43,7 +44,7 @@ class ArticlesCategoriesControllerProvider implements ControllerProviderInterfac
             }
         });
 
-        $controllers->get('/articles-categories/{id}', function($id) use ($app){
+        $controllers->get('/articles-categories/{id}', function ($id) use ($app) {
             $sql = "SELECT * FROM article_category WHERE id_article_category = ?";
             $post = $app['db']->fetchAssoc($sql, array((int) $id));
 
@@ -63,7 +64,7 @@ class ArticlesCategoriesControllerProvider implements ControllerProviderInterfac
         })->assert('id', '\d+');
 
 
-        $controllers->post('/articles-categories', function(Request $req) use ($app) {
+        $controllers->post('/articles-categories', function (Request $req) use ($app) {
             $token = $req->get('token', false);
 
             if ($token !== self::TOKEN) {

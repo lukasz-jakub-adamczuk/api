@@ -21,7 +21,12 @@ class ArticleEditorSpec extends ObjectBehavior
 
         $db->update('article', $fields, array('id_article' => $fields['id']))->shouldBeCalled();
 
-        $db->fetchAssoc('SELECT a.*, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) WHERE id_article = ?', array('123'))->willReturn(array('title' => 'do zmiany'));
+        $sql = 'SELECT a.*, ac.slug AS category 
+                FROM article a 
+                LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) 
+                WHERE id_article = ?';
+
+        $db->fetchAssoc($sql, array('123'))->willReturn(array('title' => 'do zmiany'));
         
         $response = $this->update($fields, $db);
 

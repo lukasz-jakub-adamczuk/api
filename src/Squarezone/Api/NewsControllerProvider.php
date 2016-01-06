@@ -14,7 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 // use Exception;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class NewsControllerProvider implements ControllerProviderInterface {
+class NewsControllerProvider implements ControllerProviderInterface
+{
 
     /**
      * Returns routes to connect to the given application.
@@ -27,7 +28,7 @@ class NewsControllerProvider implements ControllerProviderInterface {
     {
         $controllers = $app['controllers_factory'];
 
-        $controllers->get('/news', function(Request $req) use ($app) {
+        $controllers->get('/news', function (Request $req) use ($app) {
 
             $service = new OAuth2Service($app['db']);
 
@@ -50,10 +51,11 @@ class NewsControllerProvider implements ControllerProviderInterface {
             $url = $app['host'] . '/index.php';
 
             foreach ($items as &$item) {
+                $path = str_replace('-', '/', substr($item['creation_date'], 0, 10));
                 $item['links'] = array(
                     array(
                         'rel' => 'self',
-                        'href' => $url . '/news/'.str_replace('-', '/', substr($item['creation_date'], 0, 10)).'/'.$item['slug']
+                        'href' => $url . '/news/' . $path . '/' . $item['slug']
                     )
                 );
             }
@@ -65,7 +67,7 @@ class NewsControllerProvider implements ControllerProviderInterface {
             return json_encode($api);
         });
 
-        $controllers->get('/news/{id}', function($id) use ($app){
+        $controllers->get('/news/{id}', function ($id) use ($app) {
             $sql = "SELECT * FROM news WHERE id_news = ?";
             $post = $app['db']->fetchAssoc($sql, array((int) $id));
 
@@ -79,7 +81,7 @@ class NewsControllerProvider implements ControllerProviderInterface {
         })->assert('id', '\d+');
 
 
-        $controllers->post('/news', function(Request $req) use ($app) {
+        $controllers->post('/news', function (Request $req) use ($app) {
             // TODO: try to write tests and create separate service for creating news
 
             $token = $req->get('token', false);

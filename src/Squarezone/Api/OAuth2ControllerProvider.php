@@ -11,7 +11,8 @@ use Squarezone\Api\Service\OAuth2Service;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class OAuth2ControllerProvider implements ControllerProviderInterface {
+class OAuth2ControllerProvider implements ControllerProviderInterface
+{
 
     /**
      * Returns routes to connect to the given application.

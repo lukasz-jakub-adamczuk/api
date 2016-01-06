@@ -21,7 +21,12 @@ class ArticleProviderSpec extends ObjectBehavior
     	$req->get('category', false)->willReturn('crono-trigger');
     	$req->get('slug', false)->willReturn('recenzja');
 
-        $db->fetchAssoc('SELECT a.*, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) WHERE ac.slug="crono-trigger" AND a.slug="recenzja"')->willReturn(array('title' => '', 'slug' => ''));
+        $sql = 'SELECT a.*, ac.slug AS category 
+                FROM article a 
+                LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) 
+                WHERE ac.slug="crono-trigger" AND a.slug="recenzja"';
+
+        $db->fetchAssoc($sql)->willReturn(array('title' => '', 'slug' => ''));
 
         $article = $this->get($req, $db);
 
@@ -44,7 +49,12 @@ class ArticleProviderSpec extends ObjectBehavior
     	$req->get('category', false)->willReturn('aaa');
     	$req->get('slug', false)->willReturn('bbb');
 
-        $db->fetchAssoc('SELECT a.*, ac.slug AS category FROM article a LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) WHERE ac.slug="aaa" AND a.slug="bbb"')->willReturn(false);
+        $sql = 'SELECT a.*, ac.slug AS category 
+                FROM article a 
+                LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) 
+                WHERE ac.slug="aaa" AND a.slug="bbb"';
+
+        $db->fetchAssoc($sql)->willReturn(false);
 
         $this->get($req, $db)->shouldBe(false);
     }
