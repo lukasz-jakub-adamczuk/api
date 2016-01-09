@@ -16,4 +16,5 @@ $app->register(
 
 $console = $app['console'];
 $console->add(new \Squarezone\Command\GreetSomeoneCommand());
+$console->add(new \Squarezone\Command\CreateOauthClientCommand($app['db']));
 $console->run();
