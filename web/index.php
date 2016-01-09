@@ -8,6 +8,13 @@ use Squarezone\Api\NewsControllerProvider;
 use Squarezone\Api\ArticlesControllerProvider;
 use Squarezone\Api\ArticlesCategoriesControllerProvider;
 
+use Squarezone\Api\Service\OAuth2Service;
+use Symfony\Component\HttpFoundation\Request;
+// use Symfony\Component\HttpFoundation\Response;
+
+// use Squarezone\Exception\SquarezoneException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
 $app->mount('/oauth2', new OAuth2ControllerProvider());
 
 $app->mount('', new NewsControllerProvider());
@@ -38,13 +45,23 @@ $app->get('/', function() use ($app) {
     return json_encode($api);
 });
 
-// $app->before(function (Request $req) {
-//     $token = $req->headers->get('token');
+// need for accessToken checking
+// how to enable this for other than /oauth routes?
+$app->before(function (Request $req) use ($app) {
+    $service = new OAuth2Service($app['db']);
 
-//     if ($token != NewsControllerProvider::TOKEN) {
-//         throw new \Exception('Incorrect token', 403);
-//     }
-// });
+    $accessToken = $req->headers->get('access_token', null);
+
+    try {
+        $service->isValidAccessToken($accessToken);
+    } catch (EmptyAccessTokenException $e) {
+        throw new HttpException(403);
+    } catch (MissingAccessTokenException $e) {
+        throw new HttpException(403);
+    } catch (ExpiredAccessTokenException $e) {
+        throw new HttpException(403);
+    }
+});
 
 try {
     $app->run();
