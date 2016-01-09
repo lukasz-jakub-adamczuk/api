@@ -2,12 +2,11 @@
 
 namespace Squarezone\Api\Service;
 
-use Squarezone\Exception\OAuth2\MissingDataException;
 use Squarezone\Exception\OAuth2\MissingClientException;
-
+use Squarezone\Exception\OAuth2\MissingDataException;
 use Squarezone\Exception\OAuth2\EmptyAccessTokenException;
-use Squarezone\Exception\OAuth2\MissingAccessTokenException;
 use Squarezone\Exception\OAuth2\ExpiredAccessTokenException;
+use Squarezone\Exception\OAuth2\MissingAccessTokenException;
 
 class OAuth2Service
 {
