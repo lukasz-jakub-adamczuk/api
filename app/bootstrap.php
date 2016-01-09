@@ -12,11 +12,14 @@ $app['debug'] = true;
 $env = getenv('SQUAREZONE_ENV');
 
 if (!$env) {
-    switch ($_SERVER['HTTP_HOST']) {
+    $httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+
+    switch ($httpHost) {
         case 'api.squarezone.pl':
             $env = 'prod';
             break;
 
+        default:
         case 'localhost':
         case '192.168.1.108':
             $env = 'dev';
