@@ -5,6 +5,7 @@ namespace Squarezone\Api\Service;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\Request;
 
+use Squarezone\Exception\NotFoundException;
 use Squarezone\Exception\SquarezoneException;
 
 class NewsProvider
@@ -33,7 +34,8 @@ class NewsProvider
 
         if ($result = $db->fetchAssoc($sql)) {
             return $result;
+        } else {
+            throw new NotFoundException();
         }
-        return false;
     }
 }
