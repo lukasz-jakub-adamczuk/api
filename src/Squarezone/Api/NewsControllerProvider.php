@@ -8,8 +8,12 @@ use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
 use Squarezone\Api\Service\NewsListProvider;
 use Squarezone\Api\Service\NewsProvider;
-use Squarezone\Api\Service\OAuth2Service;
+use Squarezone\Api\Service\NewsCreator;
+use Squarezone\Api\Service\NewsEditor;
+// use Squarezone\Api\Service\NewsRemover;
+// use Squarezone\Api\Service\OAuth2Service;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 // use Exception;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -23,27 +27,13 @@ class NewsControllerProvider implements ControllerProviderInterface
      * @param Application $app An Application instance
      *
      * @return ControllerCollection A ControllerCollection instance
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
 
         $controllers->get('/news', function (Request $req) use ($app) {
-
-            $service = new OAuth2Service($app['db']);
-
-            $accessToken = $req->headers->get('access_token', null);
-
-            try {
-                $service->isValidAccessToken($accessToken);
-            } catch (EmptyAccessTokenException $e) {
-                throw new HttpException(403);
-            } catch (MissingAccessTokenException $e) {
-                throw new HttpException(403);
-            } catch (ExpiredAccessTokenException $e) {
-                throw new HttpException(403);
-            }
-
             $service = new NewsListProvider();
 
             $items = $service->get($req, $app['db']);
@@ -67,55 +57,112 @@ class NewsControllerProvider implements ControllerProviderInterface
             return json_encode($api);
         });
 
-        $controllers->get('/news/{id}', function ($id) use ($app) {
-            $sql = "SELECT * FROM news WHERE id_news = ?";
-            $post = $app['db']->fetchAssoc($sql, array((int) $id));
+        $controllers->get('/news/{year}/{month}/{day}/{slug}', function (Request $req) use ($app) {
+            $service = new NewsProvider();
 
+            $item = $service->get($req, $app['db']);
+            
             $url = $app['host'] . '/index.php';
 
-            $api = array(
-                'news' => $post
+            $path = str_replace('-', '/', substr($item['creation_date'], 0, 10));
+
+            $response = array(
+                'links' => array(
+                    array(
+                        'rel' => 'self',
+                        'href' => $url . '/news/' . $path . '/' . $item['slug']
+                    )
+                ),
+                'news' => $item
             );
 
             return json_encode($api);
-        })->assert('id', '\d+');
-
+        })
+        ->assert('year', '[0-9]{4}+')
+        ->assert('month', '[0-9]{1,2}+')
+        ->assert('day', '[0-9]{1,2}+')
+        ->assert('slug', '[a-z0-9-]+');
 
         $controllers->post('/news', function (Request $req) use ($app) {
-            // TODO: try to write tests and create separate service for creating news
-
-            $token = $req->get('token', false);
-
-            if ($token !== self::TOKEN) {
-                throw new \Exception("Invalid token", 403);
-            }
-
-            /** @var Connection $db */
-            $db = $app['db'];
+            $service = new NewsCreator();
 
             $fields = $req->request->all();
 
-            // create slug
-
-            if (empty($req->get('title'))) {
-                throw new \Exception('Missing title', 400);
-            }
-
-            $db->insert('news', $fields);
-
-            $lastId = $db->lastInsertId();
-
-            $sql = "SELECT * FROM news WHERE id_news = ?";
-            $news = $db->fetchAssoc($sql, array((int) $lastId));
+            $news = $service->create($fields, $app['db']);
 
             $url = $app['host'] . '/index.php';
 
-            $api = array(
+            $path = str_replace('-', '/', substr($news['creation_date'], 0, 10));
+
+            $response = array(
+                'links' => array(
+                    'rel' => 'self',
+                    'href' => $url . '/news/' . $path . '/' . $item['slug']
+                ),
                 'content' => $news
             );
 
-            return json_encode($api);
+            return new Response(json_encode($response), 201);
         });
+
+        $controllers->put('/news/{year}/{month}/{day}/{slug}', function (Request $req) use ($app) {
+            $db = $app['db'];
+
+            $service = new NewsProvider();
+
+            try {
+                $item = $service->get($req, $db);
+            } catch (NotFoundException $e) {
+                throw HttpException(404);
+            }
+
+            $fields = $req->request->all();
+            $fields['id_news'] = $item['id_news'];
+
+            $service = new NewsEditor();
+            $news = $service->update($fields, $db);
+
+            $url = $app['host'] . '/index.php';
+
+            $path = str_replace('-', '/', substr($news['creation_date'], 0, 10));
+
+            $response = array(
+                'links' => array(
+                    array(
+                        'rel' => 'self',
+                        'href' => $url . '/news/' . $path . '/' . $news['slug']
+                    )
+                ),
+                'news' => $news
+            );
+
+            return json_encode($response);
+        })
+        ->assert('year', '[0-9]{4}+')
+        ->assert('month', '[0-9]{1,2}+')
+        ->assert('day', '[0-9]{1,2}+')
+        ->assert('slug', '[a-z0-9-]+');
+
+        $controllers->delete('/news/{year}/{month}/{day}/{slug}', function (Request $req) use ($app) {
+            $service = new NewsProvider();
+
+            $item = $service->get($req, $app['db']);
+
+            $id = $item['id_news'];
+
+            try {
+                $service = new NewsRemover();
+                $service->delete($id, $app['db']);
+
+                return new Response(json_encode(''), 204);
+            } catch (SquarezoneException $e) {
+                return new Response(json_encode(''), 404);
+            }
+        })
+        ->assert('year', '[0-9]{4}+')
+        ->assert('month', '[0-9]{1,2}+')
+        ->assert('day', '[0-9]{1,2}+')
+        ->assert('slug', '[a-z0-9-]+');
 
         return $controllers;
     }

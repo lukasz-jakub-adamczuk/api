@@ -11,7 +11,7 @@ use Squarezone\Api\Service\ArticleProvider;
 use Squarezone\Api\Service\ArticleCreator;
 use Squarezone\Api\Service\ArticleEditor;
 use Squarezone\Api\Service\ArticleRemover;
-use Squarezone\Api\Service\OAuth2Service;
+// use Squarezone\Api\Service\OAuth2Service;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,26 +27,13 @@ class ArticlesControllerProvider implements ControllerProviderInterface
      * @param Application $app An Application instance
      *
      * @return ControllerCollection A ControllerCollection instance
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
 
         $controllers->get('/articles', function (Request $req) use ($app) {
-            $service = new OAuth2Service($app['db']);
-
-            $accessToken = $req->headers->get('access_token', null);
-
-            try {
-                $service->isValidAccessToken($accessToken);
-            } catch (EmptyAccessTokenException $e) {
-                throw new HttpException(403);
-            } catch (MissingAccessTokenException $e) {
-                throw new HttpException(403);
-            } catch (ExpiredAccessTokenException $e) {
-                throw new HttpException(403);
-            }
-
             $service = new ArticleListProvider();
 
             $items = $service->get($req, $app['db']);
@@ -57,25 +44,13 @@ class ArticlesControllerProvider implements ControllerProviderInterface
                 $item['links'] = array(
                     array(
                         'rel' => 'self',
-                        'href' => $url . '/articles/'.$item['category'].'/'.$item['slug']
+                        'href' => $url . '/articles/' . $item['category'] . '/' . $item['slug']
                     )
                 );
             }
 
             $response = array(
-                'links' => array(
-                    array(
-                        'rel' => 'next',
-                        'href' => $url . '/news?page=1&size=25'
-                    )
-                ),
-                'content' => $items,
-                'page' => array(
-                    'size' => 25,
-                    'totalElements' => count($items),
-                    'totalPages' => '???',
-                    'number' => 0
-                )
+                'content' => $items
             );
 
             return json_encode($response);
@@ -92,7 +67,7 @@ class ArticlesControllerProvider implements ControllerProviderInterface
                 $item['links'] = array(
                     array(
                         'rel' => 'self',
-                        'href' => $url . '/articles/'.$item['category'].'/'.$item['slug']
+                        'href' => $url . '/articles/' . $item['category'] . '/' . $item['slug']
                     )
                 );
             }
@@ -142,7 +117,7 @@ class ArticlesControllerProvider implements ControllerProviderInterface
                 'links' => array(
                     array(
                         'rel' => 'self',
-                        'href' => $url . '/articles/' . $article['category']. '/' . $article['slug']
+                        'href' => $url . '/articles/' . $article['category'] . '/' . $article['slug']
                     )
                 ),
                 'content' => $article
@@ -158,7 +133,7 @@ class ArticlesControllerProvider implements ControllerProviderInterface
             $item = $service->get($req, $db);
 
             $fields = $req->request->all();
-            $fields['id'] = $item['id_article'];
+            $fields['id_article'] = $item['id_article'];
 
             $service = new ArticleEditor();
             $article = $service->update($fields, $db);
