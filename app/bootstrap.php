@@ -1,5 +1,8 @@
 <?php
 
+use Squarezone\Api\Service\NewsEditor;
+use Squarezone\Api\Service\NewsProvider;
+
 date_default_timezone_set('Europe/Warsaw');
 setlocale(LC_ALL, 'pl_PL.UTF8');
 
@@ -41,3 +44,5 @@ if ($env == 'prod') {
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => $config
 ));
+
+$app['newsEditor'] = new NewsEditor(new NewsProvider(), $app['db']);
