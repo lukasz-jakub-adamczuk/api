@@ -106,21 +106,15 @@ class NewsControllerProvider implements ControllerProviderInterface
         });
 
         $controllers->put('/news/{year}/{month}/{day}/{slug}', function (Request $req) use ($app) {
-            $db = $app['db'];
-
-            $service = new NewsProvider();
+            $newsData = $req->attributes->get('_route_params');
+            $fields = $req->request->all();
 
             try {
-                $item = $service->get($req, $db);
+                $service = $app['newsEditor'];
+                $news = $service->update($newsData, $fields);
             } catch (NotFoundException $e) {
                 throw HttpException(404);
             }
-
-            $fields = $req->request->all();
-            $fields['id_news'] = $item['id_news'];
-
-            $service = new NewsEditor();
-            $news = $service->update($fields, $db);
 
             $url = $app['host'] . '/index.php';
 

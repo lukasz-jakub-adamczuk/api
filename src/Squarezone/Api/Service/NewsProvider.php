@@ -10,14 +10,15 @@ use Squarezone\Exception\SquarezoneException;
 
 class NewsProvider
 {
-    public function get(Request $req, Connection $db)
+    public function get(array $newsData, Connection $db)
     {
-        $year = $req->get('year', false);
+        $year = $newsData['year'];
         $month = $req->get('month', false);
         $day = $req->get('day', false);
         $slug = $req->get('slug', false);
 
-        if (empty($year) || empty($month) || empty($day) || empty($slug)) {
+
+        if (empty($newsData['year']) || empty($month) || empty($day) || empty($slug)) {
             throw new SquarezoneException();
         }
 
