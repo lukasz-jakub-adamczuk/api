@@ -48,18 +48,20 @@ $app->get('/', function() use ($app) {
 // need for accessToken checking
 // how to enable this for other than /oauth routes?
 $app->before(function (Request $req) use ($app) {
-    $service = new OAuth2Service($app['db']);
+    if ($_SERVER['PATH_INFO'] !== '/oauth2/') {
+        $service = new OAuth2Service($app['db']);
 
-    $accessToken = $req->headers->get('access_token', null);
+        $accessToken = $req->headers->get('access_token', null);
 
-    try {
-        $service->isValidAccessToken($accessToken);
-    } catch (EmptyAccessTokenException $e) {
-        throw new HttpException(403);
-    } catch (MissingAccessTokenException $e) {
-        throw new HttpException(403);
-    } catch (ExpiredAccessTokenException $e) {
-        throw new HttpException(403);
+        try {
+            $service->isValidAccessToken($accessToken);
+        } catch (EmptyAccessTokenException $e) {
+            throw new HttpException(403);
+        } catch (MissingAccessTokenException $e) {
+            throw new HttpException(403);
+        } catch (ExpiredAccessTokenException $e) {
+            throw new HttpException(403);
+        }
     }
 });
 

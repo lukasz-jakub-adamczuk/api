@@ -60,7 +60,9 @@ class NewsControllerProvider implements ControllerProviderInterface
         $controllers->get('/news/{year}/{month}/{day}/{slug}', function (Request $req) use ($app) {
             $service = new NewsProvider();
 
-            $item = $service->get($req, $app['db']);
+            $fields = $req->attributes->get('_route_params');
+            // $item = $service->get($fields, $app['db']);
+            $item = $service->get($fields, $app['db']);
             
             $url = $app['host'] . '/index.php';
 
@@ -76,7 +78,7 @@ class NewsControllerProvider implements ControllerProviderInterface
                 'news' => $item
             );
 
-            return json_encode($api);
+            return json_encode($response);
         })
         ->assert('year', '[0-9]{4}+')
         ->assert('month', '[0-9]{1,2}+')
@@ -106,21 +108,28 @@ class NewsControllerProvider implements ControllerProviderInterface
         });
 
         $controllers->put('/news/{year}/{month}/{day}/{slug}', function (Request $req) use ($app) {
-            $db = $app['db'];
+            // $db = $app['db'];
 
             $service = new NewsProvider();
 
+            // $fields = $req->query->all();
+            // $fields = ['year' => $year, 'month' => $month];
+            $newsData = $req->attributes->get('_route_params');
+            $fields = $req->request->all();
+
             try {
-                $item = $service->get($req, $db);
+                // $item = $service->get($fields, $app['db']);
+                $service = new NewsEditor(new NewsProvider(), $app['db']);
+                $news = $service->update($newsData, $fields);
             } catch (NotFoundException $e) {
                 throw HttpException(404);
             }
 
-            $fields = $req->request->all();
-            $fields['id_news'] = $item['id_news'];
+            // $fields = $req->request->all();
+            // $fields['id_news'] = $item['id_news'];
 
-            $service = new NewsEditor();
-            $news = $service->update($fields, $db);
+            // $service = new NewsEditor();
+            // $news = $service->update($fields, $db);
 
             $url = $app['host'] . '/index.php';
 

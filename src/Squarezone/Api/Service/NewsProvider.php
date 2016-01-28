@@ -3,21 +3,16 @@
 namespace Squarezone\Api\Service;
 
 use Doctrine\DBAL\Connection;
-use Symfony\Component\HttpFoundation\Request;
+// use Symfony\Component\HttpFoundation\Request;
 
 use Squarezone\Exception\NotFoundException;
 use Squarezone\Exception\SquarezoneException;
 
 class NewsProvider
 {
-    public function get(Request $req, Connection $db)
+    public function get(array $fields, Connection $db)
     {
-        $year = $req->get('year', false);
-        $month = $req->get('month', false);
-        $day = $req->get('day', false);
-        $slug = $req->get('slug', false);
-
-        if (empty($year) || empty($month) || empty($day) || empty($slug)) {
+        if (empty($fields['year']) || empty($fields['month']) || empty($fields['day']) || empty($fields['slug'])) {
             throw new SquarezoneException();
         }
 
@@ -25,10 +20,10 @@ class NewsProvider
 
         $whereParts = [];
 
-        $whereParts[] = sprintf('YEAR(n.creation_date)="%s"', $year);
-        $whereParts[] = sprintf('MONTH(n.creation_date)="%s"', $month);
-        $whereParts[] = sprintf('DAY(n.creation_date)="%s"', $day);
-        $whereParts[] = sprintf('n.slug="%s"', $slug);
+        $whereParts[] = sprintf('YEAR(n.creation_date)="%s"', $fields['year']);
+        $whereParts[] = sprintf('MONTH(n.creation_date)="%s"', $fields['month']);
+        $whereParts[] = sprintf('DAY(n.creation_date)="%s"', $fields['day']);
+        $whereParts[] = sprintf('n.slug="%s"', $fields['slug']);
 
         $sql .= ' WHERE ' . implode(' AND ', $whereParts);
 
