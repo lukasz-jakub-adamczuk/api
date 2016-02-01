@@ -28,19 +28,19 @@ class NewsEditor
     {
         $item = $this->provider->get($newsData, $this->db);
 
-        $fields['id_news'] = $item['id_news'];
+        // $fields['id_news'] = $item['id_news'];
 
         if (empty($fields['title'])) {
             throw new SquarezoneException('Missing title', 400);
         }
 
-        $this->db->update('news', $fields, array('id_news' => $fields['id_news']));
+        $this->db->update('news', $fields, array('id_news' => $item['id_news']));
 
         $sql = 'SELECT *
                 FROM news n
                 WHERE id_news = ?';
         
-        $news = $this->db->fetchAssoc($sql, array((int) $fields['id_news']));
+        $news = $this->db->fetchAssoc($sql, array((int) $item['id_news']));
 
         return $news;
     }

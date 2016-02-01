@@ -5,11 +5,17 @@ namespace spec\Squarezone\Api\Service;
 use Doctrine\DBAL\Connection;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Squarezone\Api\Service\NewsProvider;
 
 use Squarezone\Exception\SquarezoneException;
 
 class NewsEditorSpec extends ObjectBehavior
 {
+	function let(NewsProvider $newsProvider)
+    {
+        $this->beConstructedWith($newsProvider);
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType('Squarezone\Api\Service\NewsEditor');

@@ -8,6 +8,7 @@ use Prophecy\Argument;
 // use Symfony\Component\HttpFoundation\Request;
 
 use Squarezone\Exception\SquarezoneException;
+use Squarezone\Exception\NotFoundException;
 
 class NewsProviderSpec extends ObjectBehavior
 {
@@ -16,12 +17,18 @@ class NewsProviderSpec extends ObjectBehavior
         $this->shouldHaveType('Squarezone\Api\Service\NewsProvider');
     }
 
-    function it_provides_news(array $newsData, Connection $db)
+    function it_provides_news(Connection $db)
     {
         // $request->get('year', false)->willReturn('2004');
         // $request->get('month', false)->willReturn('06');
         // $request->get('day', false)->willReturn('28');
         // $request->get('slug', false)->willReturn('insane-in-the-web-square-zone-is-on-fire');
+        $newsData = [
+            'year' => '2004',
+            'month' => '06',
+            'day' => '28',
+            'slug' => 'insane-in-the-web-square-zone-is-on-fire'
+        ];
 
         $db->fetchAssoc('SELECT n.id_news, n.title, n.slug, n.creation_date FROM news n WHERE YEAR(n.creation_date)="2004" AND MONTH(n.creation_date)="06" AND DAY(n.creation_date)="28" AND n.slug="insane-in-the-web-square-zone-is-on-fire"')->willReturn(array('title' => '', 'slug' => ''));
 
@@ -31,20 +38,28 @@ class NewsProviderSpec extends ObjectBehavior
         $news->shouldHaveKey('slug');
     }
 
-    function it_throws_exception_when_params_incorrect(array $newsData, Connection $db)
+    function it_throws_exception_when_params_incorrect(Connection $db)
     {
-        // $request->get('year', false)->willReturn(false);
-        // $request->get('month', false)->willReturn(false);
-        // $request->get('day', false)->willReturn(false);
-        // $request->get('slug', false)->willReturn(false);
+        $newsData = [
+            'year' => false,
+            'month' => false,
+            'day' => false,
+            'slug' => false
+        ];
 
         $db->fetchAssoc(Argument::type('string'))->shouldNotBeCalled();
 
         $this->shouldThrow(SquarezoneException::class)->during('get', array($newsData, $db));
     }
 
-    function it_returns_empty_array_when_news_does_not_exists(array $newsData, Connection $db)
+    function it_throws_exception_news_does_not_exists(Connection $db)
     {
+        $newsData = [
+            'year' => '2000',
+            'month' => '01',
+            'day' => '01',
+            'slug' => 'it-does-not-exists'
+        ];
         // $request->attributes->get('_route_params')->willReturn(['year' => '2000', 'month' => '01']);
         // $request->get('year', false)->willReturn('2000');
         // $request->get('month', false)->willReturn('01');
@@ -53,6 +68,8 @@ class NewsProviderSpec extends ObjectBehavior
 
         $db->fetchAssoc('SELECT n.id_news, n.title, n.slug, n.creation_date FROM news n WHERE YEAR(n.creation_date)="2000" AND MONTH(n.creation_date)="01" AND DAY(n.creation_date)="01" AND n.slug="it-does-not-exists"')->willReturn(false);
 
-        $this->get($newsData, $db)->shouldBe(false);
+        // $this->get($newsData, $db)->shouldBe(false);
+
+        $this->shouldThrow(NotFoundException::class)->during('get', array($newsData, $db));
     }
 }

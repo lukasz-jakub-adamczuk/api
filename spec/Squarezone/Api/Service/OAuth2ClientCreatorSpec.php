@@ -9,6 +9,7 @@ use Prophecy\Argument;
 
 // use Squarezone\Exception\SquarezoneException;
 use Squarezone\Exception\OAuth2\DuplicatedClientException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 class OAuth2ClientCreatorSpec extends ObjectBehavior
 {
@@ -24,9 +25,15 @@ class OAuth2ClientCreatorSpec extends ObjectBehavior
 
     function it_throws_exception_when_client_exists($name, Connection $db)
     {
-        // $db->fetchAssoc('SELECT created_at FROM oauth_access_token WHERE access_token = ?', array('999999'))->willReturn(array('created_at' => date('Y-m-d H:i:s', time() - 7200)));
+        // $db->fetchAssoc('SELECT created_at FROM oauth_access_token WHERE access_token = ?', array('999999'))->willThrow(UniqueConstraintViolationException::class);
 
-        $this->shouldThrow(DuplicatedClientException::class)->during('create', array('???', $db));
+        $secret = sha1('very-secret-key');
+
+        $fields = ['client_id' => '999999', 'secret' => $secret];
+
+        $db->insert('oauth_clients', $fields)->willThrow(UniqueConstraintViolationException::class);
+
+        $this->shouldThrow(DuplicatedClientException::class)->during('create', array('999999', $db));
     }
 
     function it_returns_client_id_and_secret($name, Connection $db)

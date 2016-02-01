@@ -110,7 +110,7 @@ class NewsControllerProvider implements ControllerProviderInterface
         $controllers->put('/news/{year}/{month}/{day}/{slug}', function (Request $req) use ($app) {
             // $db = $app['db'];
 
-            $service = new NewsProvider();
+            // $service = new NewsProvider();
 
             // $fields = $req->query->all();
             // $fields = ['year' => $year, 'month' => $month];
