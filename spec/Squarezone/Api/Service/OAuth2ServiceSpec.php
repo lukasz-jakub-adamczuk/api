@@ -29,17 +29,17 @@ class OAuth2ServiceSpec extends ObjectBehavior
 
     function it_throws_exception_when_no_client_id_or_secret()
     {
-        $this->shouldThrow(MissingDataException::class)->during('getAccessToken', array('', ''));
+        $this->shouldThrow(MissingDataException::class)->during('getAccessToken', ['', '']);
     }
 
     function it_throws_exception_when_client_not_exists()
     {
-        $this->shouldThrow(MissingClientException::class)->during('getAccessToken', array('aaa', '123'));
+        $this->shouldThrow(MissingClientException::class)->during('getAccessToken', ['aaa', '123']);
     }
 
     function it_returns_access_token(Connection $db)
     {
-        $db->fetchAssoc('SELECT id FROM oauth_clients WHERE client_id = ? AND secret = ?', array('abcdef', '123456'))->willReturn(array('id' => ''));
+        $db->fetchAssoc('SELECT id FROM oauth_clients WHERE client_id = ? AND secret = ?', ['abcdef', '123456'])->willReturn(['id' => '']);
 
         $db->insert('oauth_access_token', Argument::type('array'))->shouldBeCalled();
 
@@ -51,24 +51,24 @@ class OAuth2ServiceSpec extends ObjectBehavior
 
     function it_throws_exception_when_access_token_is_empty()
     {
-        $this->shouldThrow(EmptyAccessTokenException::class)->during('isValidAccessToken', array(''));
+        $this->shouldThrow(EmptyAccessTokenException::class)->during('isValidAccessToken', ['']);
     }
 
     function it_throws_exception_when_access_token_does_not_exists()
     {
-        $this->shouldThrow(MissingAccessTokenException::class)->during('isValidAccessToken', array('000000'));
+        $this->shouldThrow(MissingAccessTokenException::class)->during('isValidAccessToken', ['000000']);
     }
 
     function it_throws_exception_when_access_token_is_expired(Connection $db)
     {
-        $db->fetchAssoc('SELECT created_at FROM oauth_access_token WHERE access_token = ?', array('999999'))->willReturn(array('created_at' => date('Y-m-d H:i:s', time() - 7200)));
+        $db->fetchAssoc('SELECT created_at FROM oauth_access_token WHERE access_token = ?', ['999999'])->willReturn(['created_at' => date('Y-m-d H:i:s', time() - 7200)]);
 
-        $this->shouldThrow(ExpiredAccessTokenException::class)->during('isValidAccessToken', array('999999'));
+        $this->shouldThrow(ExpiredAccessTokenException::class)->during('isValidAccessToken', ['999999']);
     }
 
     function it_returns_true_when_access_token_is_valid(Connection $db)
     {
-        $db->fetchAssoc('SELECT created_at FROM oauth_access_token WHERE access_token = ?', array('123456'))->willReturn(array('created_at' => date('Y-m-d H:i:s', time() - 360)));
+        $db->fetchAssoc('SELECT created_at FROM oauth_access_token WHERE access_token = ?', ['123456'])->willReturn(['created_at' => date('Y-m-d H:i:s', time() - 360)]);
 
         $this->isValidAccessToken('123456')->shouldReturn(true);
     }

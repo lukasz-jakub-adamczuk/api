@@ -17,14 +17,13 @@ class ArticleRemoverSpec extends ObjectBehavior
 
     function it_removes_article(Connection $db)
     {
-        // $article = $db->delete('article', array('id_article' => $id));
-        $db->delete('article', array('123'));
+        $db->delete('article', ['123']);
 
         $this->delete('123', $db);
     }
 
     function it_throws_exception_when_id_is_not_true(Connection $db)
     {
-        $this->shouldThrow(SquarezoneException::class)->during('delete', array(false, $db));
+        $this->shouldThrow(SquarezoneException::class)->during('delete', [false, $db]);
     }
 }

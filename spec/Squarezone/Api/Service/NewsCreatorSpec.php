@@ -16,7 +16,7 @@ class NewsCreatorSpec extends ObjectBehavior
     }
 
     function it_creates_news(Connection $db) {
-        $fields = array('title' => 'Potencjalny news');
+        $fields = ['title' => 'Potencjalny news'];
         
         $db->insert('news', Argument::type('array'))->shouldBeCalled();
         $db->lastInsertId()->willReturn(123);
@@ -25,7 +25,7 @@ class NewsCreatorSpec extends ObjectBehavior
                 FROM news n 
                 WHERE id_news = ?';
 
-        $db->fetchAssoc($sql, array('123'))->willReturn(array('title' => 'Jakis news'));
+        $db->fetchAssoc($sql, ['123'])->willReturn(['title' => 'Jakis news']);
 
         $response = $this->create($fields, $db);
 
@@ -33,6 +33,6 @@ class NewsCreatorSpec extends ObjectBehavior
     }
 
     function it_throws_exception_when_title_is_missing(Connection $db) {
-        $this->shouldThrow(SquarezoneException::class)->during('create', array(array(), $db));
+        $this->shouldThrow(SquarezoneException::class)->during('create', [[], $db]);
     }
 }

@@ -42,17 +42,17 @@ class NewsControllerProvider implements ControllerProviderInterface
 
             foreach ($items as &$item) {
                 $path = str_replace('-', '/', substr($item['creation_date'], 0, 10));
-                $item['links'] = array(
-                    array(
+                $item['links'] = [
+                    [
                         'rel' => 'self',
                         'href' => $url . '/news/' . $path . '/' . $item['slug']
-                    )
-                );
+                    ]
+                ];
             }
 
-            $api = array(
+            $api = [
                 'content' => $items
-            );
+            ];
 
             return json_encode($api);
         });
@@ -68,15 +68,15 @@ class NewsControllerProvider implements ControllerProviderInterface
 
             $path = str_replace('-', '/', substr($item['creation_date'], 0, 10));
 
-            $response = array(
-                'links' => array(
-                    array(
+            $response = [
+                'links' => [
+                    [
                         'rel' => 'self',
                         'href' => $url . '/news/' . $path . '/' . $item['slug']
-                    )
-                ),
+                    ]
+                ],
                 'news' => $item
-            );
+            ];
 
             return json_encode($response);
         })
@@ -96,13 +96,13 @@ class NewsControllerProvider implements ControllerProviderInterface
 
             $path = str_replace('-', '/', substr($news['creation_date'], 0, 10));
 
-            $response = array(
-                'links' => array(
+            $response = [
+                'links' => [
                     'rel' => 'self',
                     'href' => $url . '/news/' . $path . '/' . $item['slug']
-                ),
+                ],
                 'content' => $news
-            );
+            ];
 
             return new Response(json_encode($response), 201);
         });
@@ -135,15 +135,15 @@ class NewsControllerProvider implements ControllerProviderInterface
 
             $path = str_replace('-', '/', substr($news['creation_date'], 0, 10));
 
-            $response = array(
-                'links' => array(
-                    array(
+            $response = [
+                'links' => [
+                    [
                         'rel' => 'self',
                         'href' => $url . '/news/' . $path . '/' . $news['slug']
-                    )
-                ),
+                    ]
+                ],
                 'news' => $news
-            );
+            ];
 
             return json_encode($response);
         })

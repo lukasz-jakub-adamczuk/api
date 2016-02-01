@@ -22,7 +22,7 @@ class ArticleCreator
                 LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) 
                 WHERE id_article = ?';
         
-        $article = $db->fetchAssoc($sql, array((int) $lastId));
+        $article = $db->fetchAssoc($sql, [(int) $lastId]);
 
         return $article;
     }

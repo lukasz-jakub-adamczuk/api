@@ -21,7 +21,7 @@ class NewsCreator
                 FROM news n 
                 WHERE id_news = ?';
         
-        $news = $db->fetchAssoc($sql, array((int) $lastId));
+        $news = $db->fetchAssoc($sql, [(int) $lastId]);
 
         return $news;
     }

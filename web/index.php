@@ -25,22 +25,22 @@ $app->mount('', new ArticlesCategoriesControllerProvider());
 $app->get('/', function() use ($app) {
     $url = $app['host'] . '/index.php';
 
-    $api = array(
-        'links' => array(
-            array(
+    $api = [
+        'links' => [
+            [
                 'rel' => 'news',
                 'href' => $url . '/news'
-            ),
-            array(
+            ],
+            [
                 'rel' => 'articles-categories',
                 'href' => $url . '/articles-categories'
-            ),
-            array(
+            ],
+            [
                 'rel' => 'articles',
                 'href' => $url . '/articles'
-            )
-        ),
-    );
+            ]
+        ],
+    ];
 
     return json_encode($api);
 });

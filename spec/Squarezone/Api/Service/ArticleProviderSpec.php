@@ -26,7 +26,7 @@ class ArticleProviderSpec extends ObjectBehavior
                 LEFT JOIN article_category ac ON(ac.id_article_category=a.id_article_category) 
                 WHERE ac.slug="crono-trigger" AND a.slug="recenzja"';
 
-        $db->fetchAssoc($sql)->willReturn(array('title' => '', 'slug' => ''));
+        $db->fetchAssoc($sql)->willReturn(['title' => '', 'slug' => '']);
 
         $article = $this->get($req, $db);
 
@@ -41,7 +41,7 @@ class ArticleProviderSpec extends ObjectBehavior
 
     	$db->fetchAssoc(Argument::type('string'))->shouldNotBeCalled();
 
-    	$this->shouldThrow(SquarezoneException::class)->during('get', array($req, $db));
+    	$this->shouldThrow(SquarezoneException::class)->during('get', [$req, $db]);
     }
 
     function it_returns_empty_array_when_article_does_not_exists(Request $req, Connection $db)

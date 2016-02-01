@@ -30,35 +30,29 @@ class ArticlesCategoriesControllerProvider implements ControllerProviderInterfac
 
                 $url = $app['host'] . '/index.php';
 
-                $api = array(
-                    'links' => array(
-                        array(
-                            'rel' => 'next',
-                            'href' => $url . '/articles-categories?page=1&size=25'
-                        )
-                    ),
+                $api = [
                     'content' => $items
-                );
+                ];
 
                 return json_encode($api);
             }
         });
 
         $controllers->get('/articles-categories/{id}', function ($id) use ($app) {
-            $sql = "SELECT * FROM article_category WHERE id_article_category = ?";
-            $post = $app['db']->fetchAssoc($sql, array((int) $id));
+            $sql = 'SELECT * FROM article_category WHERE id_article_category = ?';
+            $post = $app['db']->fetchAssoc($sql, [(int) $id]);
 
             $url = $app['host'] . '/index.php';
 
-            $api = array(
-                'links' => array(
-                    array(
+            $api = [
+                'links' => [
+                    [
                         'rel' => 'self',
                         'href' => $url . '/articles-categories/' . $id
-                    )
-                ),
+                    ]
+                ],
                 'articles-categories' => $post
-            );
+            ];
 
             return json_encode($api);
         })->assert('id', '\d+');
@@ -68,7 +62,7 @@ class ArticlesCategoriesControllerProvider implements ControllerProviderInterfac
             $token = $req->get('token', false);
 
             if ($token !== self::TOKEN) {
-                throw new \Exception("Invalid token", 403);
+                throw new \Exception('Invalid token', 403);
             }
 
             /** @var Connection $db */
@@ -87,20 +81,14 @@ class ArticlesCategoriesControllerProvider implements ControllerProviderInterfac
             $lastId = $db->lastInsertId();
 
             // fetch recent items
-            $sql = "SELECT * FROM article_category WHERE id_article_category = ?";
-            $items = $db->fetchAssoc($sql, array((int) $lastId));
+            $sql = 'SELECT * FROM article_category WHERE id_article_category = ?';
+            $items = $db->fetchAssoc($sql, [(int) $lastId]);
 
             $url = $app['host'] . '/index.php';
 
-            $api = array(
-                'links' => array(
-                    array(
-                        'rel' => 'next',
-                        'href' => $url . '/articles-categories?page=1&size=30'
-                    )
-                ),
+            $api = [
                 'content' => $items
-            );
+            ];
 
             return json_encode($api);
         });

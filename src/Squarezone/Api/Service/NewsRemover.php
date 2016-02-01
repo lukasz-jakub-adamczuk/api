@@ -10,7 +10,7 @@ class NewsRemover
     public function delete($id, Connection $db)
     {
         if ($id) {
-            $db->delete('news', array('id_news' => $id));
+            $db->delete('news', ['id_news' => $id]);
         } else {
             throw new SquarezoneException();
         }

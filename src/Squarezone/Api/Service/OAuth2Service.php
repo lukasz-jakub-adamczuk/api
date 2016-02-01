@@ -25,24 +25,24 @@ class OAuth2Service
             throw new MissingDataException();
         } else {
             $sql = 'SELECT id FROM oauth_clients WHERE client_id = ? AND secret = ?';
-            $client = $this->db->fetchAssoc($sql, array((string) $clientId, (string) $secret));
+            $client = $this->db->fetchAssoc($sql, [(string) $clientId, (string) $secret]);
 
             if (!$client) {
                 throw new MissingClientException();
             } else {
                 $accessToken = sha1(time()+'nfjsahfxnc,mxznfzkehf,vb6548264');
-                $fields = array(
+                $fields = [
                     'client_id' => $client['id'],
                     'access_token' => $accessToken,
                     'created_at' => date('Y-m-d H:i:s')
-                );
+                ];
 
                 $this->db->insert('oauth_access_token', $fields);
 
-                $response = array(
+                $response = [
                     'access_token' => $accessToken,
                     'expires_at' => self::OAUTH_ACCESS_TOKEN_TTL
-                );
+                ];
 
                 return $response;
             }
@@ -55,7 +55,7 @@ class OAuth2Service
             throw new EmptyAccessTokenException();
         } else {
             $sql = 'SELECT created_at FROM oauth_access_token WHERE access_token = ?';
-            $token = $this->db->fetchAssoc($sql, array($accessToken));
+            $token = $this->db->fetchAssoc($sql, [$accessToken]);
 
             if (!$token) {
                 throw new MissingAccessTokenException();

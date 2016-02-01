@@ -41,17 +41,17 @@ class ArticlesControllerProvider implements ControllerProviderInterface
             $url = $app['host'] . '/index.php';
 
             foreach ($items as &$item) {
-                $item['links'] = array(
-                    array(
+                $item['links'] = [
+                    [
                         'rel' => 'self',
                         'href' => $url . '/articles/' . $item['category'] . '/' . $item['slug']
-                    )
-                );
+                    ]
+                ];
             }
 
-            $response = array(
+            $response = [
                 'content' => $items
-            );
+            ];
 
             return json_encode($response);
         });
@@ -64,17 +64,17 @@ class ArticlesControllerProvider implements ControllerProviderInterface
             $url = $app['host'] . '/index.php';
 
             foreach ($items as &$item) {
-                $item['links'] = array(
-                    array(
+                $item['links'] = [
+                    [
                         'rel' => 'self',
                         'href' => $url . '/articles/' . $item['category'] . '/' . $item['slug']
-                    )
-                );
+                    ]
+                ];
             }
 
-            $response = array(
+            $response = [
                 $items
-            );
+            ];
 
             return json_encode($response);
 
@@ -88,15 +88,15 @@ class ArticlesControllerProvider implements ControllerProviderInterface
 
             $url = $app['host'] . '/index.php';
 
-            $response = array(
-                'links' => array(
-                    array(
+            $response = [
+                'links' => [
+                    [
                         'rel' => 'self',
                         'href' => $url . '/articles/' . $item['category'] . '/' . $item['slug']
-                    )
-                ),
+                    ]
+                ],
                 'article' => $item
-            );
+            ];
 
             return json_encode($response);
         })
@@ -113,15 +113,15 @@ class ArticlesControllerProvider implements ControllerProviderInterface
 
             $url = $app['host'] . '/index.php';
 
-            $response = array(
-                'links' => array(
-                    array(
+            $response = [
+                'links' => [
+                    [
                         'rel' => 'self',
                         'href' => $url . '/articles/' . $article['category'] . '/' . $article['slug']
-                    )
-                ),
+                    ]
+                ],
                 'content' => $article
-            );
+            ];
 
             return new Response(json_encode($response), 201);
         });
@@ -140,15 +140,15 @@ class ArticlesControllerProvider implements ControllerProviderInterface
 
             $url = $app['host'] . '/index.php';
 
-            $response = array(
-                'links' => array(
-                    array(
+            $response = [
+                'links' => [
+                    [
                         'rel' => 'self',
                         'href' => $url . '/articles/' . $article['category'] . '/' . $article['slug']
-                    )
-                ),
+                    ]
+                ],
                 'article' => $article
-            );
+            ];
 
             return json_encode($response);
         })
