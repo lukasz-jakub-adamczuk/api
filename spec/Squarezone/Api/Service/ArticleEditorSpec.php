@@ -17,9 +17,9 @@ class ArticleEditorSpec extends ObjectBehavior
 
     function it_updates_article(Connection $db)
     {
-        $fields = array('id' => '123', 'title' => 'do zmiany');
+        $fields = array('id_article' => '123', 'title' => 'do zmiany');
 
-        $db->update('article', $fields, array('id_article' => $fields['id']))->shouldBeCalled();
+        $db->update('article', $fields, array('id_article' => $fields['id_article']))->shouldBeCalled();
 
         $sql = 'SELECT a.*, ac.slug AS category 
                 FROM article a 

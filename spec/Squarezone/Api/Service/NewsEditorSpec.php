@@ -11,9 +11,9 @@ use Squarezone\Exception\SquarezoneException;
 
 class NewsEditorSpec extends ObjectBehavior
 {
-	function let(NewsProvider $newsProvider)
+	function let(NewsProvider $newsProvider, Connection $db)
     {
-        $this->beConstructedWith($newsProvider);
+        $this->beConstructedWith($newsProvider, $db);
     }
 
     function it_is_initializable()
@@ -23,23 +23,32 @@ class NewsEditorSpec extends ObjectBehavior
 
     function it_updates_news(Connection $db)
     {
-        $fields = array('id' => '123', 'title' => 'do zmiany');
+    	$newsData = [
+            'year' => '2004',
+            'month' => '06',
+            'day' => '28',
+            'slug' => 'insane-in-the-web-square-zone-is-on-fire'
+        ];
 
-        $db->update('news', $fields, array('id_news' => $fields['id']))->shouldBeCalled();
+        $fields = ['id_news' => '123', 'title' => 'do zmiany'];
+
+        $db->update('news', $fields, ['id_news' => $fields['id_news']])->shouldBeCalled();
+
+        $response = $this->update($newsData, $fields);
+
+        $response->shouldHaveKey('title'); 
 
         $sql = 'SELECT *
                 FROM news n 
                 WHERE id_news = ?';
 
-        $db->fetchAssoc($sql, array('123'))->willReturn(array('title' => 'do zmiany'));
+        $db->fetchAssoc($sql, ['123'])->willReturn(['title' => 'do zmiany']);
         
-        $response = $this->update($fields, $db);
-
-        $response->shouldHaveKey('title');  
+        // $response->shouldHaveKey('title');
     }
 
     function it_throws_exception_when_title_is_missing(Connection $db)
     {
-        $this->shouldThrow(SquarezoneException::class)->during('update', array(array(), $db));
+        $this->shouldThrow(SquarezoneException::class)->during('update', [[], []]);
     }
 }
